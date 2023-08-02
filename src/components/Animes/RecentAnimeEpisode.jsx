@@ -4,13 +4,15 @@ import axios from 'axios';
 import tw from 'twrnc';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from '@expo/vector-icons/FontAwesome';
+import AnimeEpisodeStreamingLinks from './AnimeEpisodeStreamingLinks';
 
-function Anime() {
+function RecentAnimeEpisode({navigation}) {
   // State to hold the results from the API
   const [results, setResults] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
   const [isLoaded, setIsLoaded] = useState(true)
+  const [episodeId,setEpisodeId]=useState('')
   const url = 'https://api.consumet.org/anime/gogoanime/recent-episodes';
 
   const fetchData = async (page) => {
@@ -20,6 +22,7 @@ function Anime() {
       setCurrentPage(page);
       setHasNextPage(data.hasNextPage);
       setIsLoaded(false)
+
     } catch (err) {
       console.error('Error fetching data:', err);
     }
@@ -46,7 +49,7 @@ function Anime() {
   // Function to render each item in the FlatList
   const renderItem = ({ item }) => {
     return (
-      <TouchableOpacity onPress={() => handleItemPress(item.url)} style={tw`mx-auto`}>
+      <TouchableOpacity onPress={() => handleItemPress(item.url,item.episodeId)} style={tw`mx-auto`}>
         <View style={tw`flex-row items-center relative my-2`}>
           {/* Background image */}
           <ImageBackground source={{ uri: item.image }} style={tw`w-32 h-44`}>
@@ -66,15 +69,18 @@ function Anime() {
   };
 
   // Function to handle item press (can be further implemented)
-  const handleItemPress = (url) => {
+  const handleItemPress = (url,episodeId) => {
     console.log('Pressed URL:', url);
     // Implement the logic to handle the press, e.g., open URL in web browser
+    navigation.navigate('AnimeEpisodeStreamingLinks',{
+      episodeId:episodeId
+    })
   };
 
   return (
-    <View>
+    <View style={tw`bg-black`}>
       {/* Navigation arrows */}
-      <View style={tw`flex flex-row justify-between mx-4 my-4 mt-16`}>
+      <View style={tw`flex flex-row justify-between mx-4 my-4`}>
         <TouchableOpacity onPress={handlePrevPage} style={tw`bg-white pr-1 rounded-full w-12 h-12 justify-center items-center`}>
           <Icon name="chevron-left" size={30} color="#DB202C" />
         </TouchableOpacity>
@@ -82,7 +88,7 @@ function Anime() {
           <Icon name="chevron-right" size={30} color="#DB202C" />
         </TouchableOpacity>
       </View>
-      <Text>Recent Anime Episode</Text>
+      <Text style={tw`text-white font-bold pl-2`}>Page:{currentPage}</Text>
       {/* Activity Loader */}
     {isLoaded && <ActivityIndicator size="large" color="#DB202C" />}
       {/* FlatList to render the items */}
@@ -94,8 +100,9 @@ function Anime() {
         contentContainerStyle={tw`pb-76`} 
         showsVerticalScrollIndicator={false}
       />
+
     </View>
   );
 }
 
-export default Anime;
+export default RecentAnimeEpisode;
