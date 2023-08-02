@@ -46,7 +46,7 @@ function Anime() {
   // Function to render each item in the FlatList
   const renderItem = ({ item }) => {
     return (
-      <TouchableOpacity onPress={() => handleItemPress(item.url)} style={tw`w-screen mx-auto`}>
+      <TouchableOpacity onPress={() => handleItemPress(item.url)} style={tw`mx-auto`}>
         <View style={tw`flex-row items-center relative my-2`}>
           {/* Background image */}
           <ImageBackground source={{ uri: item.image }} style={tw`w-32 h-44`}>
@@ -74,7 +74,7 @@ function Anime() {
   return (
     <View>
       {/* Navigation arrows */}
-      <View style={tw`flex flex-row justify-between mx-4 my-4`}>
+      <View style={tw`flex flex-row justify-between mx-4 my-4 mt-16`}>
         <TouchableOpacity onPress={handlePrevPage} style={tw`bg-white pr-1 rounded-full w-12 h-12 justify-center items-center`}>
           <Icon name="chevron-left" size={30} color="#DB202C" />
         </TouchableOpacity>
