@@ -91,7 +91,7 @@ function Anime() {
         keyExtractor={(item) => item.episodeId}
         renderItem={renderItem}
         numColumns={3} // Use the numColumns prop to show 3 items in a row
-        contentContainerStyle={tw`pb-52`} 
+        contentContainerStyle={tw`pb-76`} 
         showsVerticalScrollIndicator={false}
       />
     </View>

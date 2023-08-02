@@ -6,7 +6,7 @@ import RecentAnimeEpisode from './src/components/Animes/RecentAnimeEpisode';
 
 const App = () => {
   return (
-    <SafeAreaView style={tw``}>
+    <SafeAreaView style={tw`bg-gray-900`}>
       <RecentAnimeEpisode/>
     </SafeAreaView>
   );
