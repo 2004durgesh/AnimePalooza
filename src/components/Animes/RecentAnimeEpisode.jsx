@@ -70,7 +70,7 @@ function RecentAnimeEpisode({navigation}) {
 
   // Function to handle item press (can be further implemented)
   const handleItemPress = (url,episodeId) => {
-    console.log('Pressed URL:', url);
+    // console.log('Pressed URL:', url);
     // Implement the logic to handle the press, e.g., open URL in web browser
     navigation.navigate('AnimeEpisodeStreamingLinks',{
       episodeId:episodeId
