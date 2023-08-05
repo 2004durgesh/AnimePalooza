@@ -1,62 +1,107 @@
+// Import required libraries
 import React from 'react';
 import tw from 'twrnc';
-import { NavigationContainer } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { MaterialIcons, Ionicons } from '@expo/vector-icons';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { MaterialIcons } from '@expo/vector-icons';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+
+// Import screen components
 import TopAiringAnime from './TopAiringAnime';
 import RecentAnimeEpisode from './RecentAnimeEpisode';
 import AnimeSearch from './AnimeSearch';
+import AnimeInfo from './AnimeInfo';
 
+// Create Material Top Tab Navigator
 const Tab = createMaterialTopTabNavigator();
+// Create Stack Navigator
+const Stack = createNativeStackNavigator();
 
+// Main App Component
 const Anime = () => {
   return (
     <SafeAreaProvider>
-      {/* <NavigationContainer> */}
-        <Tab.Navigator
-          tabBarOptions={{
-            labelStyle: tw`font-bold`,
-            tabStyle: tw`flex-row`,
-            style: tw`bg-black`,
-            indicatorStyle: tw`bg-red-600`,
-            activeTintColor: 'white',
-            inactiveTintColor: 'gray',
-          }}
-          // Add some padding to the top to prevent the tabs from being too close to the camera
-          style={tw`mt-10`}
-        >
-          <Tab.Screen
-            name="Top Airing Anime"
-            component={TopAiringAnime}
-            options={{
-              tabBarIcon: ({ color, size }) => (
-                <MaterialIcons name="whatshot" size={size} color={color} />
-              ),
-            }}
-          />
-          <Tab.Screen
-            name="Recent Anime Episodes"
-            component={RecentAnimeEpisode}
-            options={{
-              tabBarIcon: ({ color, size }) => (
-                <MaterialIcons name="fiber-new" size={size} color={color} />
-              ),
-            }}
-          />
-          <Tab.Screen
-            name="Anime Search"
-            component={AnimeSearch}
-            options={{
-              tabBarIcon: ({ color, size }) => (
-                <MaterialIcons name="fiber-new" size={size} color={color} />
-              ),
-            }}
-          />
-          {/* Add more screens/options as needed */}
-        </Tab.Navigator>
-      {/* </NavigationContainer> */}
+      {/* Stack Navigator for handling screen transitions */}
+      <Stack.Navigator>
+        {/* Screen for Top Tabs */}
+        <Stack.Screen
+          name="TopTabs"
+          component={TopTabs}
+          options={{ headerShown: false }} // Hide the default header for TopTabs
+        />
+        {/* Screen for Anime Info */}
+        <Stack.Screen
+          name="AnimeInfo"
+          component={AnimeInfo}
+          // options={{ headerShown: false }} // If you want to hide the header for AnimeInfo screen
+        />
+      </Stack.Navigator>
     </SafeAreaProvider>
+  );
+};
+
+// Component for Top Tabs
+const TopTabs = () => {
+  return (
+    <Tab.Navigator
+      screenOptions={{
+        tabBarActiveTintColor: "white",
+        tabBarInactiveTintColor: "gray",
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: 'bold',
+          marginBottom: 4,
+        },
+        tabBarItemStyle: {
+          justifyContent: 'center',
+        },
+        tabBarIndicatorStyle: {
+          backgroundColor: "#dc2626"
+        },
+        tabBarStyle: {
+          backgroundColor: "#000",
+          borderTopColor: "white",
+          borderTopWidth: 2,
+        },
+        tabBarAndroidRipple: {
+          color: '#DB202C',
+          borderless: true,
+        }
+      }}
+      // Add some padding to the top to prevent the tabs from being too close to the camera
+      style={tw`mt-10`}
+    >
+      {/* Screen for Trending */}
+      <Tab.Screen
+        name="Trending"
+        component={TopAiringAnime}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <MaterialIcons name="whatshot" size={25} color={focused ? "white" : "gray"} />
+          ),
+        }}
+      />
+      {/* Screen for Latest */}
+      <Tab.Screen
+        name="Latest"
+        component={RecentAnimeEpisode}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <MaterialIcons name="fiber-new" size={25} color={focused ? "white" : "gray"} />
+          ),
+        }}
+      />
+      {/* Screen for Search */}
+      <Tab.Screen
+        name="Search"
+        component={AnimeSearch}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <MaterialIcons name="search" size={25} color={focused ? "white" : "gray"} />
+          ),
+        }}
+      />
+    </Tab.Navigator>
   );
 };
 

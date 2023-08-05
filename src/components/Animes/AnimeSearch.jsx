@@ -2,17 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, FlatList, TouchableOpacity, ImageBackground, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import tw from 'twrnc';
-import axios from "axios";
-import { SafeAreaView} from 'react-native-safe-area-context';
-
+import axios from 'axios';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 
 const AnimeSearch = () => {
+  const navigation=useNavigation()
   const [text, onChangeText] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const url = `https://api.consumet.org/anime/gogoanime/${text}`;
 
+  // Function to fetch search results from the API
   const fetchData = async () => {
     setIsLoading(true);
     try {
@@ -56,19 +58,27 @@ const AnimeSearch = () => {
     );
   };
 
+  // Function to handle item press (can be further implemented)
+  const handleItemPress = (url, id) => {
+    // Implement the logic to handle the press, e.g., navigate to the AnimeInfo screen
+    navigation.navigate('AnimeInfo', {
+      id: id
+    })
+  };
+
   return (
     <SafeAreaView style={tw`bg-black flex-1`}>
       <View style={tw`p-4 mt-4 mx-2 w-full mx-auto`}>
         {/* Search Input */}
         <TextInput
-          style={tw`h-16 p-2 py-4 border-b-2 border-gray-300`}
+          style={tw`h-16 p-2 py-4 border-b-2 border-gray-300 text-white`}
           onChangeText={onChangeText}
           placeholder='Search...'
           value={text}
           placeholderTextColor='#A0AEC0'
         />
         {text !== '' && (
-          <Text style={tw`mt-2 text-gray-800 text-lg`}>You searched for: {text}</Text>
+          <Text style={tw`mt-2 text-gray-800 text-lg text-white`}>You searched for: {text}</Text>
         )}
         {/* Activity Loader or FlatList */}
         {isLoading ? (

@@ -1,7 +1,7 @@
-import { View, Text, StyleSheet, Button } from 'react-native';
 import React, { useEffect, useState, useRef } from 'react';
+import { View, StyleSheet, Button } from 'react-native';
 import tw from 'twrnc';
-import axios from "axios";
+import axios from 'axios';
 import { Video } from 'expo-av';
 import * as ScreenOrientation from 'expo-screen-orientation';
 
@@ -10,10 +10,13 @@ const AnimeEpisodeStreamingLinks = ({ route, navigation }) => {
   const [streamingLinks, setStreamingLinks] = useState();
   const { episodeId } = route.params;
 
+  // API URL to fetch streaming links for the episode
   const url = `https://api.consumet.org/anime/gogoanime/watch/${episodeId}`;
+
+  // Function to fetch streaming links from the API
   const fetchData = async () => {
     try {
-      const { data } = await axios.get(url, { params: { server: "gogocdn" } });
+      const { data } = await axios.get(url, { params: { server: 'gogocdn' } });
       setStreamingLinks(data.sources[0].url);
       return data;
     } catch (err) {
@@ -21,6 +24,7 @@ const AnimeEpisodeStreamingLinks = ({ route, navigation }) => {
     }
   };
 
+  // Fetch streaming links on component mount
   useEffect(() => {
     fetchData();
     // Lock the screen orientation to portrait mode initially
@@ -69,7 +73,6 @@ const styles = StyleSheet.create({
   video: {
     flex: 1,
     alignSelf: 'stretch',
-    
   },
   buttonContainer: {
     margin: 16,

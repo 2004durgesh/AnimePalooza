@@ -1,37 +1,39 @@
-import { View, Text, FlatList, TouchableOpacity, ImageBackground, ActivityIndicator } from 'react-native';
+// Import required libraries and components
 import React, { useEffect, useState } from 'react';
+import { View, Text, FlatList, TouchableOpacity, ImageBackground, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 import tw from 'twrnc';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from '@expo/vector-icons/FontAwesome';
-import { SafeAreaView} from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-
+// RecentAnimeEpisode component
 function RecentAnimeEpisode({ navigation }) {
   // State to hold the results from the API
   const [results, setResults] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(true)
+  const [isLoaded, setIsLoaded] = useState(true);
   const url = 'https://api.consumet.org/anime/gogoanime/recent-episodes';
 
+  // Function to fetch data from the API
   const fetchData = async (page) => {
     try {
       const { data } = await axios.get(url, { params: { page, type: 1 } });
       setResults(data.results);
       setCurrentPage(page);
       setHasNextPage(data.hasNextPage);
-      setIsLoaded(false)
-
+      setIsLoaded(false);
     } catch (err) {
       console.error('Error fetching data:', err);
     }
   };
 
-  // Fetch data on component mount
+  // Fetch data on component mount and when currentPage changes
   useEffect(() => {
     fetchData(currentPage);
   }, [currentPage]);
+
   // Function to handle navigation to the next page
   const handleNextPage = () => {
     if (hasNextPage) {
@@ -49,7 +51,7 @@ function RecentAnimeEpisode({ navigation }) {
   // Function to render each item in the FlatList
   const renderItem = ({ item }) => {
     return (
-      <TouchableOpacity onPress={() => handleItemPress(item.url, item.episodeId)} style={tw`mx-auto`}>
+      <TouchableOpacity onPress={() => handleItemPress(item.url, item.id)} style={tw`mx-auto`}>
         <View style={tw`flex-row items-center relative my-2`}>
           {/* Background image */}
           <ImageBackground source={{ uri: item.image }} style={tw`w-32 h-44`}>
@@ -69,12 +71,11 @@ function RecentAnimeEpisode({ navigation }) {
   };
 
   // Function to handle item press (can be further implemented)
-  const handleItemPress = (url, episodeId) => {
-    // console.log('Pressed URL:', url);
-    // Implement the logic to handle the press, e.g., open URL in web browser
-    navigation.navigate('AnimeEpisodeStreamingLinks', {
-      episodeId: episodeId
-    })
+  const handleItemPress = (url, id) => {
+    // Navigate to 'AnimeInfo' screen and pass the 'id' as a parameter
+    navigation.navigate('AnimeInfo', {
+      id: id
+    });
   };
 
   return (
@@ -89,7 +90,7 @@ function RecentAnimeEpisode({ navigation }) {
             <Icon name="chevron-right" size={30} color="#DB202C" />
           </TouchableOpacity>
         </View>
-        <Text style={tw`text-white font-bold pl-2`}>Page:{currentPage}</Text>
+        <Text style={tw`text-white font-bold pl-2`}>Page: {currentPage}</Text>
         {/* FlatList to render the items */}
         {!isLoaded ? (
           <FlatList
@@ -97,7 +98,7 @@ function RecentAnimeEpisode({ navigation }) {
             keyExtractor={(item) => item.episodeId}
             renderItem={renderItem}
             numColumns={3} // Use the numColumns prop to show 3 items in a row
-            contentContainerStyle={tw`pb-76`}
+            contentContainerStyle={tw`pb-28`}
             showsVerticalScrollIndicator={false}
           />
         ) : (
