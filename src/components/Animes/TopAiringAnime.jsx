@@ -79,7 +79,7 @@ const TopAiringAnime = ({ navigation }) => {
 
   return (
     <SafeAreaView style={tw`bg-black flex-1`}>
-      <View style={tw`bg-black flex-1`}>
+      <View>
         {/* Navigation arrows */}
         <View style={tw`flex flex-row justify-between mx-4 my-4`}>
           <TouchableOpacity onPress={handlePrevPage} style={tw`bg-white pr-1 rounded-full w-12 h-12 justify-center items-center`}>

@@ -7,7 +7,7 @@
     "icon": "./assets/AP_logo.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/AP_splash.gif",
       "resizeMode": "contain",
       "backgroundColor": "#000"
     },
@@ -30,10 +30,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/AP_logo.png",
         "backgroundColor": "#000"
-      }
+      },
+      "package": "com.example.animepalooza"
     },
     "web": {
       "favicon": "./assets/AP_logo.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "533a6f51-be67-451f-802e-fd288a8fa931"
+      }
     }
   }
 }

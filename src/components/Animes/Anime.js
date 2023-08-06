@@ -11,6 +11,7 @@ import TopAiringAnime from './TopAiringAnime';
 import RecentAnimeEpisode from './RecentAnimeEpisode';
 import AnimeSearch from './AnimeSearch';
 import AnimeInfo from './AnimeInfo';
+import AnimeEpisodeStreamingLinks from './AnimeEpisodeStreamingLinks';
 
 // Create Material Top Tab Navigator
 const Tab = createMaterialTopTabNavigator();
@@ -33,7 +34,12 @@ const Anime = () => {
         <Stack.Screen
           name="AnimeInfo"
           component={AnimeInfo}
-          // options={{ headerShown: false }} // If you want to hide the header for AnimeInfo screen
+          options={{ headerShown: false }} // If you want to hide the header for AnimeInfo screen
+        />
+        <Stack.Screen
+          name="AnimeEpisodeStreamingLinks"
+          component={AnimeEpisodeStreamingLinks}
+          options={{ headerShown: false }} // If you want to hide the header for AnimeInfo screen
         />
       </Stack.Navigator>
     </SafeAreaProvider>

@@ -6,6 +6,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import 'react-native-reanimated'
+// import 'react-native-gesture-handler'
 
 // Import screen components
 import AllLinks from './src/components/Movies/AllLinks';
@@ -20,7 +22,7 @@ const Tab = createBottomTabNavigator();
 const App = () => {
   return (
     <SafeAreaProvider>
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
       <NavigationContainer>
         {/* Bottom Tab Navigator */}
         <Tab.Navigator
@@ -59,16 +61,6 @@ const App = () => {
               ),
             }}
           />
-          {/* Screen for Movies */}
-          <Tab.Screen
-            name="Movies"
-            component={AllLinks}
-            options={{
-              tabBarIcon: ({ color, size }) => (
-                <MaterialIcons name="movie" size={30} color={color} />
-              ),
-            }}
-          />
           {/* Screen for Manga */}
           <Tab.Screen
             name="Manga"
@@ -80,6 +72,16 @@ const App = () => {
                   size={30}
                   color={color}
                 />
+              ),
+            }}
+          />
+          {/* Screen for Movies */}
+          <Tab.Screen
+            name="Movies"
+            component={AllLinks}
+            options={{
+              tabBarIcon: ({ color, size }) => (
+                <MaterialIcons name="movie" size={30} color={color} />
               ),
             }}
           />
