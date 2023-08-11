@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "AnimePalooza_expo",
+    "name": "AnimePalooza",
     "slug": "AnimePalooza_expo",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/AP_logo.png",
+    "icon": "./assets/adaptive-icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/AP_splash.gif",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#000"
     },
@@ -28,18 +28,24 @@
     ],
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/AP_logo.png",
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#000"
       },
       "package": "com.example.animepalooza"
     },
     "web": {
-      "favicon": "./assets/AP_logo.png"
+      "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
         "projectId": "533a6f51-be67-451f-802e-fd288a8fa931"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/533a6f51-be67-451f-802e-fd288a8fa931"
     }
   }
 }

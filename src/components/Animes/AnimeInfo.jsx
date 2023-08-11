@@ -39,7 +39,6 @@ const AnimeInfo = ({ route, navigation }) => {
       setAnimeUrl(data.url);
       setGenres(data.genres);
       setEpisodes(data.episodes);
-      console.log(data);
       return data;
     } catch (err) {
       throw new Error(err.message);
@@ -99,7 +98,7 @@ const AnimeInfo = ({ route, navigation }) => {
             {/* Other Names */}
             <Text style={[tw`text-[#D3D3D3] px-2 leading-5 text-justify`]}>Other name(s): {name}</Text>
           </View>
-          <View style={[tw`h-full`]}>
+          <View style={tw`h-full`}>
             {/* Animated description view */}
             <MotiView
               from={{
@@ -112,6 +111,7 @@ const AnimeInfo = ({ route, navigation }) => {
                 type: 'timing',
                 duration: 500
               }}
+              style={{ overflow: 'hidden', borderBottomLeftRadius: 16, borderBottomRightRadius: 16 }}
             >
               <LinearGradient colors={['rgba(0, 0, 0, 0.9)', 'rgba(0, 0, 0, 1)']} style={{ height: '100%', width: '100%' }}>
                 <TouchableOpacity onPress={handleIconClick}>
