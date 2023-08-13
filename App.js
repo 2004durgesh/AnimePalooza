@@ -10,10 +10,11 @@ import 'react-native-reanimated'
 // import 'react-native-gesture-handler'
 
 // Import screen components
-import AllLinks from './src/components/Movies/AllLinks';
 import AllServer from './src/components/Manga/AllServer';
 import News from './src/components/News/News';
 import Anime from './src/components/Animes/Anime';
+import Providers from './src/components/Movies/Providers';
+import Movies from './src/components/Movies/Movies';
 
 // Create Bottom Tab Navigator
 const Tab = createBottomTabNavigator();
@@ -78,7 +79,7 @@ const App = () => {
           {/* Screen for Movies */}
           <Tab.Screen
             name="Movies"
-            component={AllLinks}
+            component={Movies}
             options={{
               tabBarIcon: ({ color, size }) => (
                 <MaterialIcons name="movie" size={30} color={color} />

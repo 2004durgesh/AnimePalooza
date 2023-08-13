@@ -8,20 +8,20 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { useIsFocused } from '@react-navigation/native';
 
-const AnimeEpisodeStreamingLinks = ({ route, navigation }) => {
+const StreamingLinks = ({ route, navigation }) => {
+  const { episodeId, mediaId } = route.params;
   const videoRef = useRef(null);
   const [streamingLinks, setStreamingLinks] = useState();
   const [savedPosition, setSavedPosition] = useState(0);
   const isFocused = useIsFocused();
-  const { episodeId } = route.params;
 
   // API URL to fetch streaming links for the episode
-  const url = `https://api.consumet.org/anime/gogoanime/watch/${episodeId}`;
+  const url = `https://api.consumet.org/movies/dramacool/watch?episodeId=${episodeId}&mediaId=${mediaId}`;
 
   // Function to fetch streaming links from the API
   const fetchData = async () => {
     try {
-      const { data } = await axios.get(url, { params: { server: 'gogocdn' } });
+      const { data } = await axios.get(url, { params: { server: 'asianload' } });
       setStreamingLinks(data.sources[0].url);
       return data;
     } catch (err) {
@@ -108,4 +108,4 @@ const AnimeEpisodeStreamingLinks = ({ route, navigation }) => {
   );
 };
 
-export default AnimeEpisodeStreamingLinks;
+export default StreamingLinks;

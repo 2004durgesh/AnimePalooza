@@ -1,38 +1,42 @@
-// Import required libraries and components
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, ImageBackground, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, TextInput, TouchableOpacity, ImageBackground } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { LinearGradient } from 'expo-linear-gradient';
 import axios from 'axios';
 import tw from 'twrnc';
-import { LinearGradient } from 'expo-linear-gradient';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-// RecentAnimeEpisode component
-function RecentAnimeEpisode({ navigation }) {
-  // State to hold the results from the API
-  const [results, setResults] = useState([]);
+const FlixHQSearch = () => {
+  const [text, onChangeText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [hasNextPage, setHasNextPage] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(true);
-  const url = 'https://127.0.0.1:3000/anime/gogoanime/recent-episodes';
+  const [searchResults, setSearchResults] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Function to fetch data from the API
+  const url = `https://flixhq.durgesh-kumark3.repl.co/flixhq/search?searchValue=${text}`;
+
+
+  // Function to fetch search results from the API
   const fetchData = async (page) => {
+    setIsLoading(true);
     try {
-      const { data } = await axios.get(url, { params: { page, type: 1 } });
-      setResults(data.results);
-      setCurrentPage(page);
-      setHasNextPage(data.hasNextPage);
-      setIsLoaded(false);
+      const { data } = await axios.get(url, { params: { page } });
+      setSearchResults(data.results);
     } catch (err) {
-      console.error('Error fetching data:', err);
+      throw new Error(err.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Fetch data on component mount and when currentPage changes
   useEffect(() => {
-    fetchData(currentPage);
-  }, [currentPage]);
+    // Fetch data whenever the search text changes
+    if (text !== '') {
+      fetchData(currentPage);
+    } else {
+      // Clear the search results when the search text is empty
+      setSearchResults([]);
+    }
+  }, [text]);
 
   // Function to handle navigation to the next page
   const handleNextPage = () => {
@@ -48,10 +52,9 @@ function RecentAnimeEpisode({ navigation }) {
     }
   };
 
-  // Function to render each item in the FlatList
   const renderItem = ({ item }) => {
     return (
-      <TouchableOpacity onPress={() => handleItemPress(item.url, item.id)} style={tw`mx-auto`}>
+      <TouchableOpacity onPress={() => handleItemPress(item.url, item.id)} style={tw`mx-1`}>
         <View style={tw`flex-row items-center relative my-2`}>
           {/* Background image */}
           <ImageBackground source={{ uri: item.image }} style={tw`w-32 h-44`}>
@@ -61,7 +64,6 @@ function RecentAnimeEpisode({ navigation }) {
                 <Text style={tw`font-bold text-white`} numberOfLines={2} ellipsizeMode="tail">
                   {item.title}
                 </Text>
-                {/* <Text style={tw`font-bold text-white text-sm`}>Episode {item.episodeNumber}</Text> */}
               </View>
             </LinearGradient>
           </ImageBackground>
@@ -72,15 +74,30 @@ function RecentAnimeEpisode({ navigation }) {
 
   // Function to handle item press (can be further implemented)
   const handleItemPress = (url, id) => {
-    // Navigate to 'AnimeInfo' screen and pass the 'id' as a parameter
-    navigation.navigate('AnimeInfo', {
+    // Implement the logic to handle the press, e.g., navigate to the AnimeInfo screen
+    navigation.navigate('FlixHQInfo', {
       id: id
-    });
+    })
   };
-
   return (
-    <SafeAreaView style={tw`bg-black flex-1`}>
-      <View style={tw`bg-black flex-1`}>
+    <SafeAreaView style={tw`bg-black h-full`}>
+      {/* Header with Back Button and Share Button */}
+      <View style={tw`flex-row justify-between`}>
+        <Ionicons name="arrow-back-circle-sharp" size={40} color="white" style={tw`m-6`} onPress={() => { navigation.goBack() }} />
+      </View>
+
+      <View style={tw`p-4 mt-4 mx-2 w-full mx-auto`}>
+        {/* Search Input */}
+        <TextInput
+          style={tw`h-16 p-2 py-4 border-b-2 border-gray-300 text-white`}
+          onChangeText={onChangeText}
+          placeholder='Search...'
+          value={text}
+          placeholderTextColor='#A0AEC0'
+        />
+        {text !== '' && (
+          <Text style={tw`mt-2 text-gray-800 text-lg text-white`}>You searched for: {text}</Text>
+        )}
         {/* Navigation arrows */}
         <View style={tw`flex flex-row justify-between mx-4 my-4`}>
           <TouchableOpacity onPress={handlePrevPage} style={tw`bg-white pr-1 rounded-full w-12 h-12 justify-center items-center`}>
@@ -90,26 +107,24 @@ function RecentAnimeEpisode({ navigation }) {
             <FontAwesome name="chevron-right" size={30} color="#DB202C" />
           </TouchableOpacity>
         </View>
+
         <Text style={tw`text-white font-bold pl-2`}>Page: {currentPage}</Text>
-        {/* FlatList to render the items */}
-        {!isLoaded ? (
+        {/* Activity Loader or FlatList */}
+        {isLoading ? (
+          <ActivityIndicator size="large" color="#DB202C" />
+        ) : (
           <FlatList
-            data={results}
-            keyExtractor={(item) => item.episodeId}
+            data={searchResults}
+            keyExtractor={(item) => item.id}
             renderItem={renderItem}
             numColumns={3} // Use the numColumns prop to show 3 items in a row
-            contentContainerStyle={tw`pb-28`}
+            contentContainerStyle={tw`pb-72`}
             showsVerticalScrollIndicator={false}
           />
-        ) : (
-          // Activity Loader
-          <View style={tw`flex-1 justify-center items-center`}>
-            <ActivityIndicator size="large" color="#DB202C" />
-          </View>
         )}
       </View>
     </SafeAreaView>
-  );
+  )
 }
 
-export default RecentAnimeEpisode;
+export default FlixHQSearch

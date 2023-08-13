@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, FlatList, TouchableOpacity, ImageBackground, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import tw from 'twrnc';
+import { FontAwesome } from '@expo/vector-icons';
 import axios from 'axios';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 
 const AnimeSearch = () => {
-  const navigation=useNavigation()
+  const navigation = useNavigation()
   const [text, onChangeText] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -30,12 +32,26 @@ const AnimeSearch = () => {
   useEffect(() => {
     // Fetch data whenever the search text changes
     if (text !== '') {
-      fetchData();
+      fetchData(currentPage);
     } else {
       // Clear the search results when the search text is empty
       setSearchResults([]);
     }
   }, [text]);
+
+  // Function to handle navigation to the next page
+  const handleNextPage = () => {
+    if (hasNextPage) {
+      fetchData(currentPage + 1);
+    }
+  };
+
+  // Function to handle navigation to the previous page
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      fetchData(currentPage - 1);
+    }
+  };
 
   const renderItem = ({ item }) => {
     return (
@@ -68,10 +84,10 @@ const AnimeSearch = () => {
 
   return (
     <SafeAreaView style={tw`bg-black flex-1`}>
-      <View style={tw`p-4 mt-4 mx-2 w-full mx-auto`}>
+      <View style={tw`p-2 mx-2 w-full mx-auto`}>
         {/* Search Input */}
         <TextInput
-          style={tw`h-16 p-2 py-4 border-b-2 border-gray-300 text-white`}
+          style={tw`h-16 p-2 border-b-2 border-gray-300 text-white`}
           onChangeText={onChangeText}
           placeholder='Search...'
           value={text}
@@ -80,6 +96,17 @@ const AnimeSearch = () => {
         {text !== '' && (
           <Text style={tw`mt-2 text-gray-800 text-lg text-white`}>You searched for: {text}</Text>
         )}
+        {/* Navigation arrows */}
+        <View style={tw`flex flex-row justify-between mx-4 my-4`}>
+          <TouchableOpacity onPress={handlePrevPage} style={tw`bg-white pr-1 rounded-full w-12 h-12 justify-center items-center`}>
+            <FontAwesome name="chevron-left" size={30} color="#DB202C" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleNextPage} style={tw`bg-white pl-1 rounded-full w-12 h-12 justify-center items-center`}>
+            <FontAwesome name="chevron-right" size={30} color="#DB202C" />
+          </TouchableOpacity>
+        </View>
+
+        <Text style={tw`text-white font-bold pl-2`}>Page: {currentPage}</Text>
         {/* Activity Loader or FlatList */}
         {isLoading ? (
           <ActivityIndicator size="large" color="#DB202C" />

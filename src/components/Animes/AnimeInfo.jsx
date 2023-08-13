@@ -63,13 +63,13 @@ const AnimeInfo = ({ route, navigation }) => {
       <ScrollView>
         <View style={tw`bg-black`}>
           {/* Top Image Section */}
-          <ImageBackground source={{ uri: image }} style={tw`h-72`}>
+          <ImageBackground source={{ uri: image }} style={tw`h-96`}>
             {/* Image Overlay */}
             <LinearGradient colors={['rgba(0, 0, 0, 0.5)', 'rgba(0, 0, 0, 0.9)']} style={{ height: '100%', width: '100%' }}>
               {/* Header with Back Button and Share Button */}
-              <View style={tw`flex-1 flex-row justify-between`}>
-                <Ionicons name="arrow-back-circle-sharp" size={40} color="white" style={tw`p-6`} onPress={() => { navigation.goBack() }} />
-                <Ionicons name="share-social-outline" size={35} color="white" style={tw`p-6`} />
+              <View style={tw`flex-row justify-between`}>
+                <Ionicons name="arrow-back-circle-sharp" size={40} color="white" style={tw`m-6`} onPress={() => { navigation.goBack() }} />
+                <Ionicons name="share-social-outline" size={35} color="white" style={tw`m-6`} />
               </View>
               {/* Anime Details */}
               <View style={tw`flex flex-row mx-2`}>
@@ -94,7 +94,7 @@ const AnimeInfo = ({ route, navigation }) => {
           {/* Anime Description and Other Names */}
           <View style={tw`mt-4`}>
             {/* Anime Description */}
-            <Text style={[tw`text-[#D3D3D3] px-2 leading-5 text-justify`]}>{desc}</Text>
+            <Text style={[tw`text-[#D3D3D3] px-2 leading-5 text-justify mb-5`]}>Description: {desc}</Text>
             {/* Other Names */}
             <Text style={[tw`text-[#D3D3D3] px-2 leading-5 text-justify`]}>Other name(s): {name}</Text>
           </View>

@@ -4,7 +4,7 @@ import tw from 'twrnc';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { MaterialIcons } from '@expo/vector-icons';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 // Import screen components
 import TopAiringAnime from './TopAiringAnime';
@@ -21,28 +21,28 @@ const Stack = createNativeStackNavigator();
 // Main App Component
 const Anime = () => {
   return (
-    <SafeAreaProvider>
-      {/* Stack Navigator for handling screen transitions */}
-      <Stack.Navigator>
-        {/* Screen for Top Tabs */}
-        <Stack.Screen
-          name="TopTabs"
-          component={TopTabs}
-          options={{ headerShown: false }} // Hide the default header for TopTabs
-        />
-        {/* Screen for Anime Info */}
-        <Stack.Screen
-          name="AnimeInfo"
-          component={AnimeInfo}
-          options={{ headerShown: false }} // If you want to hide the header for AnimeInfo screen
-        />
-        <Stack.Screen
-          name="AnimeEpisodeStreamingLinks"
-          component={AnimeEpisodeStreamingLinks}
-          options={{ headerShown: false }} // If you want to hide the header for AnimeInfo screen
-        />
-      </Stack.Navigator>
-    </SafeAreaProvider>
+    <SafeAreaView style={tw`bg-black flex-1`}>
+        {/* Stack Navigator for handling screen transitions */}
+        <Stack.Navigator>
+          {/* Screen for Top Tabs */}
+          <Stack.Screen
+            name="TopTabs"
+            component={TopTabs}
+            options={{ headerShown: false }} // Hide the default header for TopTabs
+          />
+          {/* Screen for Anime Info */}
+          <Stack.Screen
+            name="AnimeInfo"
+            component={AnimeInfo}
+            options={{ headerShown: false }} // If you want to hide the header for AnimeInfo screen
+          />
+          <Stack.Screen
+            name="AnimeEpisodeStreamingLinks"
+            component={AnimeEpisodeStreamingLinks}
+            options={{ headerShown: false }} // If you want to hide the header for AnimeInfo screen
+          />
+        </Stack.Navigator>
+    </SafeAreaView>
   );
 };
 
@@ -66,16 +66,12 @@ const TopTabs = () => {
         },
         tabBarStyle: {
           backgroundColor: "#000",
-          borderTopColor: "white",
-          borderTopWidth: 2,
         },
         tabBarAndroidRipple: {
           color: '#DB202C',
           borderless: true,
         }
       }}
-      // Add some padding to the top to prevent the tabs from being too close to the camera
-      style={tw`mt-10`}
     >
       {/* Screen for Trending */}
       <Tab.Screen

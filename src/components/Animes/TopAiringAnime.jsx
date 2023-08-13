@@ -3,7 +3,7 @@ import { View, Text, FlatList, TouchableOpacity, ImageBackground, ActivityIndica
 import axios from 'axios';
 import tw from 'twrnc';
 import { LinearGradient } from 'expo-linear-gradient';
-import Icon from '@expo/vector-icons/FontAwesome';
+import {FontAwesome} from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const TopAiringAnime = ({ navigation }) => {
@@ -83,10 +83,10 @@ const TopAiringAnime = ({ navigation }) => {
         {/* Navigation arrows */}
         <View style={tw`flex flex-row justify-between mx-4 my-4`}>
           <TouchableOpacity onPress={handlePrevPage} style={tw`bg-white pr-1 rounded-full w-12 h-12 justify-center items-center`}>
-            <Icon name="chevron-left" size={30} color="#DB202C" />
+            <FontAwesome name="chevron-left" size={30} color="#DB202C" />
           </TouchableOpacity>
           <TouchableOpacity onPress={handleNextPage} style={tw`bg-white pl-1 rounded-full w-12 h-12 justify-center items-center`}>
-            <Icon name="chevron-right" size={30} color="#DB202C" />
+            <FontAwesome name="chevron-right" size={30} color="#DB202C" />
           </TouchableOpacity>
         </View>
         <Text style={tw`text-white font-bold pl-2`}>Page: {currentPage}</Text>
