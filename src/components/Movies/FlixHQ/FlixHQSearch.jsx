@@ -6,13 +6,13 @@ import tw from 'twrnc';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const FlixHQSearch = () => {
+const FlixHQSearch = ({navigation}) => {
   const [text, onChangeText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const url = `https://flixhq.durgesh-kumark3.repl.co/flixhq/search?searchValue=${text}`;
+  const url = `https://consumet-api-pied.vercel.app/movies/flixhq/${text}`;
 
 
   // Function to fetch search results from the API
@@ -96,7 +96,7 @@ const FlixHQSearch = () => {
           placeholderTextColor='#A0AEC0'
         />
         {text !== '' && (
-          <Text style={tw`mt-2 text-gray-800 text-lg text-white`}>You searched for: {text}</Text>
+          <Text style={tw`mt-2 text-gray-800 text-lg text-white`}>You searched for: {text.trim()}</Text>
         )}
         {/* Navigation arrows */}
         <View style={tw`flex flex-row justify-between mx-4 my-4`}>

@@ -21,7 +21,7 @@ const DramacoolInfo = ({ route, navigation }) => {
     const [showDescription, setShowDescription] = useState(false); // State to control the animation
 
     // API URL to fetch movies or series data
-    const url = `https://api.consumet.org/movies/dramacool/info?id=${id}`;
+    const url = `https://consumet-api-pied.vercel.app/movies/dramacool/info?id=${id}`;
 
     // Function to fetch data from the API
     const fetchData = async () => {
@@ -34,7 +34,6 @@ const DramacoolInfo = ({ route, navigation }) => {
             setDate(data.releaseDate);
             setName(data.otherNames);
             setEpisodes(data.episodes);
-            console.log(data);
             return data;
         } catch (err) {
             throw new Error(err.message);
@@ -56,7 +55,7 @@ const DramacoolInfo = ({ route, navigation }) => {
 
     return (
         <SafeAreaView style={tw`bg-black h-full`}>
-            <ScrollView>
+            <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={tw`bg-black`}>
                     {/* Top Image Section */}
                     <ImageBackground source={{ uri: image }} style={tw`h-96`}>
@@ -88,8 +87,7 @@ const DramacoolInfo = ({ route, navigation }) => {
                         {/* Movie or series Description */}
                         <Text style={[tw`text-[#D3D3D3] px-2 leading-5 text-justify mb-4`]}>Description: {desc}</Text>
                         {/* Other Names */}
-                        <Text style={[tw`text-[#D3D3D3] px-2 leading-5 text-justify`]}>Other name(s):
-                            {name.map((name) => { return `${name}, ` })}</Text>
+                        <Text style={[tw`text-[#D3D3D3] px-2 leading-5 text-justify`]}>Other name(s): {name.map((name) => { return `${name} ,  ` })}</Text>
                     </View>
                     <View style={tw`h-full`}>
                         {/* Animated description view */}

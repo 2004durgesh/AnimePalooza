@@ -24,7 +24,7 @@ const AnimeInfo = ({ route, navigation }) => {
   const [showDescription, setShowDescription] = useState(false); // State to control the animation
 
   // API URL to fetch anime data
-  const url = `https://api.consumet.org/anime/gogoanime/info/${id}`;
+  const url = `https://consumet-api-pied.vercel.app/anime/gogoanime/info/${id}`;
 
   // Function to fetch data from the API
   const fetchData = async () => {
@@ -60,7 +60,7 @@ const AnimeInfo = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={tw`bg-black h-full`}>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={tw`bg-black`}>
           {/* Top Image Section */}
           <ImageBackground source={{ uri: image }} style={tw`h-96`}>

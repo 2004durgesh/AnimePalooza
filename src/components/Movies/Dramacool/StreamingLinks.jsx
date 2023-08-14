@@ -16,7 +16,7 @@ const StreamingLinks = ({ route, navigation }) => {
   const isFocused = useIsFocused();
 
   // API URL to fetch streaming links for the episode
-  const url = `https://api.consumet.org/movies/dramacool/watch?episodeId=${episodeId}&mediaId=${mediaId}`;
+  const url = `https://consumet-api-pied.vercel.app/movies/dramacool/watch?episodeId=${episodeId}&mediaId=${mediaId}`;
 
   // Function to fetch streaming links from the API
   const fetchData = async () => {
@@ -100,7 +100,7 @@ const StreamingLinks = ({ route, navigation }) => {
           useNativeControls
           resizeMode="contain"
           isLooping
-          shouldPlay
+          shouldPlay={true}
           onFullscreenUpdate={handleFullscreenUpdate}
         />
       </View>

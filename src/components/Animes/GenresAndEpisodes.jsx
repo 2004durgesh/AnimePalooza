@@ -10,7 +10,7 @@ const GenresAndEpisodes = ({ genres, episodes }) => {
   // Render genre tags in horizontal scroll view
   const renderGenres = () => {
     return (
-      <ScrollView horizontal={true}>
+      <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
         <View style={tw`flex-row`}>
           {genres.map((ele, index) => (
             <View key={index} style={tw`border p-2 h-10 rounded-md mx-1 bg-gray-700`}>

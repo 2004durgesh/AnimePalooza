@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "AnimePalooza",
+    "name": "Anime\nPalooza",
     "slug": "AnimePalooza_expo",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -9,7 +9,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#000"
+      "backgroundColor": "black"
     },
     "assetBundlePatterns": [
       "**/*"

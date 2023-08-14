@@ -12,7 +12,7 @@ const DramacoolSearch = ({ navigation }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const url = `https://api.consumet.org/movies/dramacool/${text}`;
+  const url = `https://consumet-api-pied.vercel.app/movies/dramacool/${text}`;
 
   // Function to fetch search results from the API
   const fetchData = async (page) => {
@@ -96,7 +96,7 @@ const DramacoolSearch = ({ navigation }) => {
           placeholderTextColor='#A0AEC0'
         />
         {text !== '' && (
-          <Text style={tw`mt-2 text-gray-800 text-lg text-white`}>You searched for: {text}</Text>
+          <Text style={tw`mt-2 text-gray-800 text-lg text-white`}>You searched for: {text.trim()}</Text>
         )}
         {/* Navigation arrows */}
         <View style={tw`flex flex-row justify-between mx-4 my-4`}>

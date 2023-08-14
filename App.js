@@ -1,19 +1,16 @@
 // Import required libraries
 import React from 'react';
-import tw from 'twrnc';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import 'react-native-reanimated'
-// import 'react-native-gesture-handler'
 
 // Import screen components
 import AllServer from './src/components/Manga/AllServer';
 import News from './src/components/News/News';
 import Anime from './src/components/Animes/Anime';
-import Providers from './src/components/Movies/Providers';
 import Movies from './src/components/Movies/Movies';
 
 // Create Bottom Tab Navigator

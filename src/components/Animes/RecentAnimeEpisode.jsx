@@ -14,7 +14,7 @@ function RecentAnimeEpisode({ navigation }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
   const [isLoaded, setIsLoaded] = useState(true);
-  const url = 'https://127.0.0.1:3000/anime/gogoanime/recent-episodes';
+  const url = 'https://consumet-api-pied.vercel.app/anime/gogoanime/recent-episodes';
 
   // Function to fetch data from the API
   const fetchData = async (page) => {

@@ -34,7 +34,7 @@ const Providers = ({navigation}) => {
                         />
                     </TouchableOpacity>
                     
-                    <TouchableOpacity onPress={() => { navigation.navigate('Movies', { screen: 'FlixHQSearch' }) }}>
+                    <TouchableOpacity onPress={() => { navigation.navigate('FlixHQ') }}>
                         <AllProvidersLinks
                             image={FlixHQ}
                             provider="FlixHQ"
@@ -42,6 +42,7 @@ const Providers = ({navigation}) => {
                         />
                     </TouchableOpacity>
                 </View>
+                <Text style={tw`text-red-500 text-lg font-md mb-10 pl-2`}>/* FlixHQ Streaming Links are not working currently */</Text>
             </SafeAreaView>
         </>
     );

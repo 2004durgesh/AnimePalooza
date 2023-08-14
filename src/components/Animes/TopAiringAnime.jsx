@@ -12,7 +12,7 @@ const TopAiringAnime = ({ navigation }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
   const [isLoaded, setIsLoaded] = useState(true);
-  const url = `https://api.consumet.org/anime/gogoanime/top-airing`;
+  const url = `https://consumet-api-pied.vercel.app/anime/gogoanime/top-airing`;
 
   // Function to fetch data from the API
   const fetchData = async (page) => {
