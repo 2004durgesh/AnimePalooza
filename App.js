@@ -8,10 +8,10 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import 'react-native-reanimated'
 
 // Import screen components
-import AllServer from './src/components/Manga/AllServer';
 import News from './src/components/News/News';
 import Anime from './src/components/Animes/Anime';
 import Movies from './src/components/Movies/Movies';
+import Manga from './src/components/Manga/Manga';
 
 // Create Bottom Tab Navigator
 const Tab = createBottomTabNavigator();
@@ -62,7 +62,7 @@ const App = () => {
           {/* Screen for Manga */}
           <Tab.Screen
             name="Manga"
-            component={AllServer}
+            component={Manga}
             options={{
               tabBarIcon: ({ color, size }) => (
                 <MaterialIcons

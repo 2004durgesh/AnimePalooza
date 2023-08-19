@@ -13,7 +13,7 @@ const Episodes = ({episodes,mediaId }) => {
         <View>
           <Text style={tw`text-white text-xl p-2 pt-4 font-semibold`}>{episodes.length} Episodes</Text>
           {episodes.map((ele, index) => (
-            <View key={index} style={tw`border p-2 py-3 my-1 h-16`}>
+            <View key={index} style={tw`border-b border-gray-800 p-2 py-3 my-1 h-16`}>
               <TouchableOpacity onPress={() => navigation.navigate('StreamingLinks', { episodeId: ele.id,mediaId:mediaId })}>
                 <Text style={tw`text-white text-lg`}>Episode {ele.episode}</Text>
                 <Text style={tw`text-white text-xs text-[#D3D3D3]`}>Episode {ele.releaseDate}</Text>
