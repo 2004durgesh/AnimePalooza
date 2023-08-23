@@ -15,7 +15,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const NewsInfo = ({ route, navigation }) => {
+  // Get id and thumbnail from route params
   const { id, thumbnail } = route.params ?? {};
+
+  // State to hold news feed details
   const [searchResults, setSearchResults] = useState({
     title: '',
     uploadedAt: '',
@@ -40,6 +43,7 @@ const NewsInfo = ({ route, navigation }) => {
     }
   };
 
+  // Function to open URL in browser
   const openUrl = () => {
     if (searchResults.url) {
       Linking.openURL(searchResults.url).catch((err) =>
@@ -50,7 +54,7 @@ const NewsInfo = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={tw`bg-black h-full`}>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <ImageBackground source={{ uri: thumbnail }} style={tw`h-96`}>
           {/* Gradient overlay */}
           <LinearGradient
@@ -81,50 +85,32 @@ const NewsInfo = ({ route, navigation }) => {
                 source={{ uri: thumbnail }}
                 style={tw`w-32 h-44 rounded-md`}
               />
-              <View style={tw`px-4 flex-1 gap-4`}>
-                <View>
-                  <Text
-                    style={tw`text-white text-xl font-md`}
-                    selectable={true}
-                  >
-                    {searchResults.title}
-                  </Text>
-                </View>
-                <View style={tw`flex-row items-center`}>
-                  <Fontisto name="date" size={18} color="#D3D3D3" />
-                  <Text
-                    style={tw`text-[#D3D3D3] text-lg px-2 font-md`}
-                  >
-                    {searchResults.uploadedAt} EDT
-                  </Text>
-                </View>
+              <View style={tw`px-4 flex-1`}>
+                <Text style={tw`text-white flex-1 text-lg`} selectable={true}>
+                  {searchResults.title}
+                </Text>
               </View>
             </View>
+            <View style={tw`flex-row items-center m-2`}>
+              <Fontisto name="date" size={18} color="#D3D3D3" />
+              <Text style={tw`text-[#D3D3D3] text-lg px-2`}>
+                {searchResults.uploadedAt}
+              </Text>
+            </View>
             {/* Anime Intro */}
-            <Text
-              style={[
-                tw`text-[#D3D3D3] px-2 leading-5 text-justify text-lg my-5`,
-              ]}
-            >
-              {searchResults.intro}
-            </Text>
+            <View>
+              <Text style={tw`text-[#D3D3D3] px-2 text-justify text-base my-1`}>
+                Intro: {searchResults.intro}
+              </Text>
+            </View>
           </LinearGradient>
         </ImageBackground>
         {/* Description */}
-        <View style={tw`mt-4`}>
+        <View style={tw`mt-7`}>
           <Text
-            style={[
-              tw`text-[#D3D3D3] px-2 leading-5 text-justify text-xl mb-2`,
-            ]}
+            style={tw`text-[#D3D3D3] px-2 text-justify text-base mb-2`}
           >
-            Description:
-          </Text>
-          <Text
-            style={[
-              tw`text-[#D3D3D3] px-2 leading-5 text-justify text-xl mb-5`,
-            ]}
-          >
-            {searchResults.description}
+            Description: {searchResults.description}
           </Text>
           {/* Read More Button */}
           <TouchableOpacity

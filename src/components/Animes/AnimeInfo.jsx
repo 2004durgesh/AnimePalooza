@@ -59,7 +59,7 @@ const AnimeInfo = ({ route, navigation }) => {
   }, [id]);
 
   return (
-    <SafeAreaView style={tw`bg-black h-full`}>
+    <View style={tw`bg-black h-full`}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={tw`bg-black`}>
           {/* Top Image Section */}
@@ -138,7 +138,7 @@ const AnimeInfo = ({ route, navigation }) => {
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

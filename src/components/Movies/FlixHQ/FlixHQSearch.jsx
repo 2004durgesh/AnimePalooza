@@ -118,7 +118,7 @@ const FlixHQSearch = ({navigation}) => {
             keyExtractor={(item) => item.id}
             renderItem={renderItem}
             numColumns={3} // Use the numColumns prop to show 3 items in a row
-            contentContainerStyle={tw`pb-72`}
+            contentContainerStyle={tw`pb-96`}
             showsVerticalScrollIndicator={false}
           />
         )}

@@ -42,7 +42,7 @@ const Providers = ({navigation}) => {
                         />
                     </TouchableOpacity>
                 </View>
-                <Text style={tw`text-red-500 text-lg font-md mb-10 pl-2`}>/* FlixHQ Streaming Links are not working currently */</Text>
+                <Text style={tw`text-red-500 text-lg mb-10 pl-2`}>/* FlixHQ Streaming Links are not working currently */</Text>
             </SafeAreaView>
         </>
     );

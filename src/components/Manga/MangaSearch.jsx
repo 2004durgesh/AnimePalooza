@@ -1,18 +1,21 @@
-import { View, Text, FlatList, ActivityIndicator, TextInput, TouchableOpacity, ImageBackground } from 'react-native'
+import { View, Text, FlatList, ActivityIndicator, TextInput, TouchableOpacity } from 'react-native'
 import React, { useState, useEffect } from 'react'
-import { LinearGradient } from 'expo-linear-gradient';
-import axios from 'axios';
 import tw from 'twrnc';
-import { FontAwesome, Ionicons } from '@expo/vector-icons';
+import { FontAwesome, Ionicons, Fontisto, Feather } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import axios from 'axios';
 
 const MangaSearch = ({ route, navigation }) => {
+  // Extract the provider from route params
   const provider = route.params.provider;
+
+  // State variables
   const [text, onChangeText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  // API URL
   const url = `https://consumet-api-pied.vercel.app/manga/${provider}/${text}`;
 
   // Function to fetch search results from the API
@@ -52,29 +55,49 @@ const MangaSearch = ({ route, navigation }) => {
     }
   };
 
+  // Render each manga item
   const renderItem = ({ item }) => {
+    const isAdultContent = item.contentRating !== 'safe';
+
     return (
-      <TouchableOpacity onPress={() => handleItemPress(item.url, item.id)} style={tw`mx-1`}>
-        <View style={tw`flex-row items-center relative my-2`}>
-          {/* Background image */}
-          <ImageBackground source={{ uri: item.image }} style={tw`w-32 h-44`}>
-            {/* Text and episode number */}
-            <LinearGradient colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.5)']} style={{ height: '100%', width: '100%' }}>
-              <View style={tw`absolute w-28 h-44 pl-3 -bottom-32`}>
-                <Text style={tw`font-bold text-white`} numberOfLines={2} ellipsizeMode="tail">
-                  {item.title}
-                </Text>
-              </View>
-            </LinearGradient>
-          </ImageBackground>
+      <TouchableOpacity activeOpacity={0.7} onPress={() => handleItemPress(item.url, item.id)} style={tw`mx-1 p-2`}>
+        <View style={tw`rounded-lg p-4 border border-gray-500`}>
+          <Text style={tw`text-white font-bold mb-2 text-center`} numberOfLines={1}>
+            {item.title}
+          </Text>
+          <View style={tw`flex-row items-center gap-1`}>
+            {item.status === 'completed' ? (
+              <Ionicons name="checkmark-done" size={15} color="#D3D3D3" />
+            ) : (
+              <Feather name="clock" size={15} color="#D3D3D3" />
+            )}
+            <Text style={tw`text-gray-300 mb-1`}>
+              Status: <Text style={tw`capitalize`}>{item.status}</Text>
+            </Text>
+          </View>
+          <View style={tw`flex-row items-center gap-1`}>
+            <Fontisto name="date" size={15} color="#D3D3D3" />
+            <Text style={tw`text-gray-300 mb-1`}>
+              Release Date: {item.releaseDate ? <Text>{item.releaseDate}</Text> : <Text>-- --</Text>}
+            </Text>
+          </View>
+          {isAdultContent && (
+            <View style={tw`bg-red-600 rounded-md p-1 mt-2`}>
+              <Text style={tw`text-white text-sm text-center`}>
+                Warning: This manga may contain adult content.
+              </Text>
+            </View>
+          )}
+          <Text style={tw`text-gray-300`} numberOfLines={3} ellipsizeMode='tail'>
+            {item.description}
+          </Text>
         </View>
       </TouchableOpacity>
     );
   };
 
-  // Function to handle item press (can be further implemented)
+  // Function to handle item press
   const handleItemPress = (url, id) => {
-    // Implement the logic to handle the press, e.g., navigate to the MangaInfo screen
     navigation.navigate('MangaInfo', {
       id: id,
       provider: provider
@@ -109,7 +132,6 @@ const MangaSearch = ({ route, navigation }) => {
             <FontAwesome name="chevron-right" size={30} color="#DB202C" />
           </TouchableOpacity>
         </View>
-
         <Text style={tw`text-white font-bold pl-2`}>Page: {currentPage}</Text>
         {/* Activity Loader or FlatList */}
         {isLoading ? (
@@ -119,8 +141,7 @@ const MangaSearch = ({ route, navigation }) => {
             data={searchResults}
             keyExtractor={(item) => item.id}
             renderItem={renderItem}
-            numColumns={3} // Use the numColumns prop to show 3 items in a row
-            contentContainerStyle={tw`pb-36`}
+            contentContainerStyle={tw`pb-96`}
             showsVerticalScrollIndicator={false}
           />
         )}
