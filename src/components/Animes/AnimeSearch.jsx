@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, FlatList, TouchableOpacity, ImageBackground, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, FlatList, TouchableOpacity, ImageBackground, ActivityIndicator, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import tw from 'twrnc';
 import { FontAwesome } from '@expo/vector-icons';
@@ -53,12 +53,16 @@ const AnimeSearch = () => {
     }
   };
 
+  
+const screenWidth = Dimensions.get('window').width;
+const imageBackgroundWidth = screenWidth * 0.3;
+
   const renderItem = ({ item }) => {
     return (
       <TouchableOpacity onPress={() => handleItemPress(item.url, item.id)} style={tw`mx-1`}>
         <View style={tw`flex-row items-center relative my-2`}>
           {/* Background image */}
-          <ImageBackground source={{ uri: item.image }} style={tw`w-32 h-44`}>
+          <ImageBackground source={{ uri: item.image }} sstyle={[tw`h-44`, { width: imageBackgroundWidth }]}>
             {/* Text and episode number */}
             <LinearGradient colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.5)']} style={{ height: '100%', width: '100%' }}>
               <View style={tw`absolute w-28 h-44 pl-3 -bottom-32`}>

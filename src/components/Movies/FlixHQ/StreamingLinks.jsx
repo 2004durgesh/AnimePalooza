@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Dimensions } from 'react-native';
+import { View, Dimensions, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 import tw from 'twrnc';
 import { Ionicons } from '@expo/vector-icons';
@@ -21,7 +21,7 @@ const StreamingLinks = ({ route, navigation }) => {
   // Function to fetch streaming links from the API
   const fetchData = async () => {
     try {
-      const { data } = await axios.get(url, { params: { server: 'asianload' } });
+      const { data } = await axios.get(url);
       setStreamingLinks(data.sources[0].url);
       return data;
     } catch (err) {
@@ -78,6 +78,7 @@ const StreamingLinks = ({ route, navigation }) => {
     }
   };
 
+
   return (
     <SafeAreaView style={tw`bg-black h-full`}>
       {/* Header with Back Button */}
@@ -102,6 +103,11 @@ const StreamingLinks = ({ route, navigation }) => {
           isLooping
           shouldPlay={true}
           onFullscreenUpdate={handleFullscreenUpdate}
+          onLoading={() => {
+            return (<ActivityIndicator
+              size="large" color="#DB202C"
+            />)
+          }}
         />
       </View>
     </SafeAreaView>

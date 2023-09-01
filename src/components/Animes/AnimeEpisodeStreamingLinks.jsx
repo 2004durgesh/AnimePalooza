@@ -102,6 +102,11 @@ const AnimeEpisodeStreamingLinks = ({ route, navigation }) => {
           isLooping
           shouldPlay={true}
           onFullscreenUpdate={handleFullscreenUpdate}
+          onLoading={() => {
+            return (<ActivityIndicator
+              size="large" color="#DB202C"
+            />)
+          }}
         />
       </View>
     </SafeAreaView>
