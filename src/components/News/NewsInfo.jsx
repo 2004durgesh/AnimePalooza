@@ -1,13 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  ImageBackground,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-  Linking,
-} from 'react-native';
+import { View, Text, ImageBackground, Image, TouchableOpacity, ScrollView, Linking, Share } from 'react-native';
 import tw from 'twrnc';
 import axios from 'axios';
 import { Ionicons, Fontisto } from '@expo/vector-icons';
@@ -19,13 +11,7 @@ const NewsInfo = ({ route, navigation }) => {
   const { id, thumbnail } = route.params ?? {};
 
   // State to hold news feed details
-  const [searchResults, setSearchResults] = useState({
-    title: '',
-    uploadedAt: '',
-    intro: '',
-    description: '',
-    url: '',
-  });
+  const [searchResults, setSearchResults] = useState({ title: '', uploadedAt: '', intro: '', description: '', url: '', });
 
   const url = `https://consumet-api-pied.vercel.app/news/ann/info?id=${id}`;
 
@@ -52,6 +38,18 @@ const NewsInfo = ({ route, navigation }) => {
     }
   };
 
+
+  //sharing
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message: `Check out this news: ${searchResults.title}\n\n${searchResults.url}`,
+      });
+    } catch (error) {
+      Alert.alert(error.message);
+    }
+  };
+
   return (
     <SafeAreaView style={tw`bg-black h-full`}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -63,21 +61,12 @@ const NewsInfo = ({ route, navigation }) => {
           >
             {/* Header */}
             <View style={tw`flex-row justify-between`}>
-              <Ionicons
-                name="arrow-back-circle-sharp"
-                size={40}
-                color="white"
-                style={tw`m-6`}
+              <Ionicons name="arrow-back-circle-sharp" size={40} color="white" style={tw`m-6`}
                 onPress={() => {
                   navigation.goBack();
                 }}
               />
-              <Ionicons
-                name="share-social-outline"
-                size={35}
-                color="white"
-                style={tw`m-6`}
-              />
+              <Ionicons name="share-social-outline" size={35} color="white" style={tw`m-6`} onPress={onShare}/>
             </View>
             {/* Anime Details */}
             <View style={tw`flex flex-row mx-2`}>
@@ -99,7 +88,7 @@ const NewsInfo = ({ route, navigation }) => {
             </View>
             {/* Anime Intro */}
             <View>
-              <Text style={tw`text-[#D3D3D3] px-2 text-justify text-base my-1`}>
+              <Text style={tw`text-[#D3D3D3] px-2 text-justify text-base my-1`} numberOfLines={3} ellipsizeMode='tail'>
                 Intro: {searchResults.intro}
               </Text>
             </View>

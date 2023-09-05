@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, FlatList, TouchableOpacity, ImageBackground, ActivityIndicator, Dimensions } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  FlatList,
+  TouchableOpacity,
+  ImageBackground,
+  ActivityIndicator,
+  Dimensions,
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import tw from 'twrnc';
 import { FontAwesome } from '@expo/vector-icons';
@@ -8,7 +17,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 
 const AnimeSearch = () => {
-  const navigation = useNavigation()
+  const navigation = useNavigation();
   const [text, onChangeText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [searchResults, setSearchResults] = useState([]);
@@ -20,7 +29,7 @@ const AnimeSearch = () => {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const { data } = await axios.get(url, { params: { page: 1 } });
+      const { data } = await axios.get(url, { params: { page: currentPage } });
       setSearchResults(data.results);
     } catch (err) {
       throw new Error(err.message);
@@ -53,23 +62,21 @@ const AnimeSearch = () => {
     }
   };
 
-  
-const screenWidth = Dimensions.get('window').width;
-const imageBackgroundWidth = screenWidth * 0.3;
+  const screenWidth = Dimensions.get('window').width;
+  const imageBackgroundWidth = screenWidth * .3;
 
   const renderItem = ({ item }) => {
     return (
       <TouchableOpacity onPress={() => handleItemPress(item.url, item.id)} style={tw`mx-1`}>
         <View style={tw`flex-row items-center relative my-2`}>
           {/* Background image */}
-          <ImageBackground source={{ uri: item.image }} sstyle={[tw`h-44`, { width: imageBackgroundWidth }]}>
+          <ImageBackground source={{ uri: item.image }} style={[tw`h-44`, { width: imageBackgroundWidth }]}>
             {/* Text and episode number */}
             <LinearGradient colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.5)']} style={{ height: '100%', width: '100%' }}>
               <View style={tw`absolute w-28 h-44 pl-3 -bottom-32`}>
                 <Text style={tw`font-bold text-white`} numberOfLines={2} ellipsizeMode="tail">
                   {item.title}
                 </Text>
-                {/* <Text style={tw`font-bold text-white text-sm`}>Episode {item.episodeNumber}</Text> */}
               </View>
             </LinearGradient>
           </ImageBackground>
@@ -82,8 +89,8 @@ const imageBackgroundWidth = screenWidth * 0.3;
   const handleItemPress = (url, id) => {
     // Implement the logic to handle the press, e.g., navigate to the AnimeInfo screen
     navigation.navigate('AnimeInfo', {
-      id: id
-    })
+      id: id,
+    });
   };
 
   return (
@@ -93,9 +100,9 @@ const imageBackgroundWidth = screenWidth * 0.3;
         <TextInput
           style={tw`h-16 p-2 border-b-2 border-gray-300 text-white`}
           onChangeText={onChangeText}
-          placeholder='Search...'
+          placeholder="Search..."
           value={text}
-          placeholderTextColor='#A0AEC0'
+          placeholderTextColor="#A0AEC0"
         />
         {text !== '' && (
           <Text style={tw`mt-2 text-gray-800 text-lg text-white`}>You searched for: {text.trim()}</Text>
@@ -120,7 +127,7 @@ const imageBackgroundWidth = screenWidth * 0.3;
             keyExtractor={(item) => item.id}
             renderItem={renderItem}
             numColumns={3} // Use the numColumns prop to show 3 items in a row
-            contentContainerStyle={tw`pb-36`}
+            contentContainerStyle={tw`pb-96`}
             showsVerticalScrollIndicator={false}
           />
         )}

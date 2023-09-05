@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ImageBackground, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, ImageBackground, Image, TouchableOpacity, ScrollView,Share } from 'react-native';
 import axios from "axios";
 import tw from 'twrnc';
 import { Fontisto, Ionicons, AntDesign } from '@expo/vector-icons';
@@ -15,6 +15,7 @@ const FlixHQInfo = ({ route, navigation }) => {
 
     // State variables to store movies or series data
     const [image, setImage] = useState('');
+    const [flixhqUrl,setUrl]=useState('')
     const [type, setType] = useState(''); // Added type state
     const [title, setTitle] = useState('');
     const [desc, setDesc] = useState('');
@@ -37,6 +38,7 @@ const FlixHQInfo = ({ route, navigation }) => {
             const { data } = await axios.get(url);
             // Set movies or series data to state variables
             setImage(data.image);
+            setUrl(data.url);
             setType(data.type); // Set type
             setTitle(data.title);
             setDesc(data.description);
@@ -67,6 +69,19 @@ const FlixHQInfo = ({ route, navigation }) => {
         }
     }, [id]);
 
+    
+
+  //sharing
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message: `Check out this : ${title}\n\n${flixhqUrl}`,
+      });
+    } catch (error) {
+      Alert.alert(error.message);
+    }
+  };
+
     return (
         <SafeAreaView style={tw`bg-black h-full`}>
             <ScrollView style={tw`h-full`} showsVerticalScrollIndicator={false}>
@@ -80,7 +95,7 @@ const FlixHQInfo = ({ route, navigation }) => {
                                 {/* Back Button */}
                                 <Ionicons name="arrow-back-circle-sharp" size={40} color="white" style={tw`m-6`} onPress={() => { navigation.goBack() }} />
                                 {/* Share Button */}
-                                <Ionicons name="share-social-outline" size={35} color="white" style={tw`m-6`} />
+                                <Ionicons name="share-social-outline" size={35} color="white" style={tw`m-6`} onPress={onShare}/>
                             </View>
                             {/* movies or series Details */}
                             <View style={tw`flex flex-row mx-2`}>

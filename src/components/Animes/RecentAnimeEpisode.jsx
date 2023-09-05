@@ -49,7 +49,7 @@ function RecentAnimeEpisode({ navigation }) {
   };
 
 const screenWidth = Dimensions.get('window').width;
-const imageBackgroundWidth = screenWidth * 0.3;
+const imageBackgroundWidth = screenWidth *.3;
 
   // Function to render each item in the FlatList
   const renderItem = ({ item }) => {

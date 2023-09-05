@@ -37,7 +37,7 @@ const GenresAndEpisodes = ({ genres, episodes, mediaId, type }) => {
                     {episodes.map((ele, index) => (
                         // Episode Item
                         <View key={index} style={tw`border-b border-gray-800 p-2 py-3 my-1 h-16`}>
-                            <TouchableOpacity onPress={() => navigation.navigate('StreamingLinks', { episodeId: ele.id, mediaId: mediaId })}>
+                            <TouchableOpacity onPress={() => navigation.navigate('StreamingLinks', { episodeId: ele.id, mediaId: mediaId, episodeTitle: ele.title })}>
                                 <Text style={tw`text-white text-lg`}>{ele.title}</Text>
                                 {type === 'TV Series' ? <Text style={tw`text-white text-xs text-[#D3D3D3]`}>Episode {ele.number} Season{ele.season}</Text> : null}
                             </TouchableOpacity>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Dimensions } from 'react-native';
+import { View, Dimensions, Text,ToastAndroid } from 'react-native';
 import axios from 'axios';
 import tw from 'twrnc';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,29 +9,28 @@ import * as ScreenOrientation from 'expo-screen-orientation';
 import { useIsFocused } from '@react-navigation/native';
 
 const StreamingLinks = ({ route, navigation }) => {
-  const { episodeId, mediaId } = route.params;
+  const { episodeId, mediaId, episodeNumber } = route.params;
   const videoRef = useRef(null);
-  const [streamingLinks, setStreamingLinks] = useState();
+  const [streamingSource, setStreamingSource] = useState([]);
   const [savedPosition, setSavedPosition] = useState(0);
   const isFocused = useIsFocused();
 
-  // API URL to fetch streaming links for the episode
-  const url = `https://consumet-api-pied.vercel.app/movies/dramacool/watch?episodeId=${episodeId}&mediaId=${mediaId}`;
-
-  // Function to fetch streaming links from the API
-  const fetchData = async () => {
-    try {
-      const { data } = await axios.get(url, { params: { server: 'asianload' } });
-      setStreamingLinks(data.sources[0].url);
-      return data;
-    } catch (err) {
-      throw new Error(err.message);
-    }
-  };
 
   // Fetch streaming links on component mount
   useEffect(() => {
-    fetchData();
+    // API URL to fetch streaming links for the episode
+    const url = `https://consumet-api-pied.vercel.app/movies/dramacool/watch?episodeId=${episodeId}&mediaId=${mediaId}`;
+    // Function to fetch streaming links from the API
+    const fetchData = async () => {
+      try {
+        const { data } = await axios.get(url, { params: { server: 'asianload' } });
+        setStreamingSource(data.sources[0].url);
+        return data;
+      } catch (err) {
+        throw new Error(err.message);
+      }
+    };
+    fetchData()
     // Lock the screen orientation to portrait mode initially
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
 
@@ -39,7 +38,7 @@ const StreamingLinks = ({ route, navigation }) => {
     return () => {
       ScreenOrientation.unlockAsync();
     };
-  }, []);
+  }, [episodeId, mediaId]);
 
   useEffect(() => {
     const playVideo = async () => {
@@ -78,6 +77,18 @@ const StreamingLinks = ({ route, navigation }) => {
     }
   };
 
+  const renderLoadingIndicator = () => (
+    <ActivityIndicator size="large" color="#DB202C" />
+  );
+
+  const showToastWithGravity = () => {
+    ToastAndroid.showWithGravity(
+      'Error Fetching Video',
+      ToastAndroid.SHORT,
+      ToastAndroid.BOTTOM,
+    );
+  };
+
   return (
     <SafeAreaView style={tw`bg-black h-full`}>
       {/* Header with Back Button */}
@@ -92,21 +103,19 @@ const StreamingLinks = ({ route, navigation }) => {
           }}
         />
       </View>
-      <View style={tw`flex-1 items-center justify-center`}>
+      <View style={tw`flex-1`}>
+        <Text style={tw`text-white text-center font-bold`}>Episode Number: {episodeNumber}</Text>
         <Video
           ref={videoRef}
           style={tw`flex-1 self-stretch`}
-          source={{ uri: streamingLinks }}
+          source={{ uri: streamingSource }}
           useNativeControls
           resizeMode="contain"
           isLooping
           shouldPlay={true}
           onFullscreenUpdate={handleFullscreenUpdate}
-          onLoading={() => {
-            return (<ActivityIndicator
-              size="large" color="#DB202C"
-            />)
-          }}
+          onLoading={renderLoadingIndicator}
+          onError={showToastWithGravity}
         />
       </View>
     </SafeAreaView>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ImageBackground, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, ImageBackground, Image, TouchableOpacity, ScrollView,Share } from 'react-native';
 import axios from 'axios';
 import tw from 'twrnc';
 import { Fontisto, Ionicons, AntDesign, Feather } from '@expo/vector-icons';
@@ -56,6 +56,18 @@ const MangaInfo = ({ route, navigation }) => {
       fetchData();
     }
   }, [id]);
+  
+
+  //sharing
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message: `Check out this manga: ${title}`,
+      });
+    } catch (error) {
+      Alert.alert(error.message);
+    }
+  };
 
   return (
     <SafeAreaView style={tw`bg-black h-full`}>
@@ -68,7 +80,7 @@ const MangaInfo = ({ route, navigation }) => {
               {/* Header with Back Button and Share Button */}
               <View style={tw`flex-row justify-between`}>
                 <Ionicons name="arrow-back-circle-sharp" size={40} color="white" style={tw`m-6`} onPress={() => { navigation.goBack() }} />
-                <Ionicons name="share-social-outline" size={35} color="white" style={tw`m-6`} />
+                <Ionicons name="share-social-outline" size={35} color="white" style={tw`m-6`}  onPress={onShare}/>
               </View>
               {/* movies or series Details */}
               <View style={tw`flex flex-row mx-2`}>

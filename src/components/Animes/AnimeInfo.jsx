@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ImageBackground, Image, TouchableOpacity, ScrollView } from 'react-native';
-import axios from "axios";
+import {
+  View,
+  Text,
+  ImageBackground,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  Share,
+  Alert,
+} from 'react-native';
+import axios from 'axios';
 import tw from 'twrnc';
 import { Ionicons, Feather, AntDesign } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -58,6 +67,17 @@ const AnimeInfo = ({ route, navigation }) => {
     }
   }, [id]);
 
+  // Sharing
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message: `Check out this anime: ${title}\n\n${animeUrl}`,
+      });
+    } catch (error) {
+      Alert.alert(error.message);
+    }
+  };
+
   return (
     <View style={tw`bg-black h-full`}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -69,7 +89,7 @@ const AnimeInfo = ({ route, navigation }) => {
               {/* Header with Back Button and Share Button */}
               <View style={tw`flex-row justify-between`}>
                 <Ionicons name="arrow-back-circle-sharp" size={40} color="white" style={tw`m-6`} onPress={() => { navigation.goBack() }} />
-                <Ionicons name="share-social-outline" size={35} color="white" style={tw`m-6`} />
+                <Ionicons name="share-social-outline" size={35} color="white" style={tw`m-6`} onPress={onShare} />
               </View>
               {/* Anime Details */}
               <View style={tw`flex flex-row mx-2`}>
@@ -109,7 +129,7 @@ const AnimeInfo = ({ route, navigation }) => {
               }}
               transition={{
                 type: 'timing',
-                duration: 500
+                duration: 500,
               }}
               style={{ overflow: 'hidden', borderBottomLeftRadius: 16, borderBottomRightRadius: 16 }}
             >
@@ -125,7 +145,7 @@ const AnimeInfo = ({ route, navigation }) => {
                     }}
                     transition={{
                       type: 'timing',
-                      duration: 500
+                      duration: 500,
                     }}
                   >
                     <AntDesign name="down" size={24} color="white" style={tw`text-center pt-3`} />

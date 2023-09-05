@@ -32,7 +32,7 @@ const GenresAndEpisodes = ({ genres, episodes }) => {
           <Text style={tw`text-white text-xl p-2 pt-4 font-semibold`}>{episodes.length} Episodes</Text>
           {episodes.map((ele, index) => (
             <View key={index} style={tw`border-b border-gray-800 p-2 py-3 my-1 h-16`}>
-              <TouchableOpacity onPress={() => navigation.navigate('AnimeEpisodeStreamingLinks', { episodeId: ele.id })}>
+              <TouchableOpacity onPress={() => navigation.navigate('AnimeEpisodeStreamingLinks', { episodeId: ele.id,episodeNumber:ele.number })}>
                 <Text style={tw`text-white text-lg`}>Episode {ele.number}</Text>
               </TouchableOpacity>
             </View>
