@@ -1,4 +1,4 @@
-import { View, Text, FlatList, ActivityIndicator, TextInput, TouchableOpacity } from 'react-native'
+import { View, Text, FlatList, ActivityIndicator, TextInput, TouchableOpacity,ScrollView } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import tw from 'twrnc';
 import { FontAwesome, Ionicons, Fontisto, Feather } from '@expo/vector-icons';
@@ -107,45 +107,46 @@ const MangaSearch = ({ route, navigation }) => {
   return (
     <SafeAreaView style={tw`bg-black h-full`}>
       {/* Header with Back Button */}
-      <View style={tw`flex-row justify-between`}>
-        <Ionicons name="arrow-back-circle-sharp" size={40} color="white" style={tw`m-6`} onPress={() => { navigation.goBack() }} />
-      </View>
-
-      <View style={tw`p-4 mt-4 mx-2 w-full mx-auto`}>
-        {/* Search Input */}
-        <TextInput
-          style={tw`h-16 p-2 py-4 border-b-2 border-gray-300 text-white`}
-          onChangeText={onChangeText}
-          placeholder='Search...'
-          value={text}
-          placeholderTextColor='#A0AEC0'
-        />
-        {text !== '' && (
-          <Text style={tw`mt-2 text-gray-800 text-lg text-white`}>You searched for: {text.trim()}</Text>
-        )}
-        {/* Navigation arrows */}
-        <View style={tw`flex flex-row justify-between mx-4 my-4`}>
-          <TouchableOpacity onPress={handlePrevPage} style={tw`bg-white pr-1 rounded-full w-12 h-12 justify-center items-center`}>
-            <FontAwesome name="chevron-left" size={30} color="#DB202C" />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleNextPage} style={tw`bg-white pl-1 rounded-full w-12 h-12 justify-center items-center`}>
-            <FontAwesome name="chevron-right" size={30} color="#DB202C" />
-          </TouchableOpacity>
+      <ScrollView>
+        <View style={tw`flex-row justify-between`}>
+          <Ionicons name="arrow-back-circle-sharp" size={40} color="white" style={tw`m-6`} onPress={() => { navigation.goBack() }} />
         </View>
-        <Text style={tw`text-white font-bold pl-2`}>Page: {currentPage}</Text>
-        {/* Activity Loader or FlatList */}
-        {isLoading ? (
-          <ActivityIndicator size="large" color="#DB202C" />
-        ) : (
-          <FlatList
-            data={searchResults}
-            keyExtractor={(item) => item.id}
-            renderItem={renderItem}
-            contentContainerStyle={tw`pb-96`}
-            showsVerticalScrollIndicator={false}
+        <View style={tw`p-4 mt-4 mx-2 w-full mx-auto`}>
+          {/* Search Input */}
+          <TextInput
+            style={tw`h-16 p-2 py-4 border-b-2 border-gray-300 text-white`}
+            onChangeText={onChangeText}
+            placeholder='Search...'
+            value={text}
+            placeholderTextColor='#A0AEC0'
           />
-        )}
-      </View>
+          {text !== '' && (
+            <Text style={tw`mt-2 text-gray-800 text-lg text-white`}>You searched for: {text.trim()}</Text>
+          )}
+          {/* Navigation arrows */}
+          <View style={tw`flex flex-row justify-between mx-4 my-4`}>
+            <TouchableOpacity onPress={handlePrevPage} style={tw`bg-white pr-1 rounded-full w-12 h-12 justify-center items-center`}>
+              <FontAwesome name="chevron-left" size={30} color="#DB202C" />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleNextPage} style={tw`bg-white pl-1 rounded-full w-12 h-12 justify-center items-center`}>
+              <FontAwesome name="chevron-right" size={30} color="#DB202C" />
+            </TouchableOpacity>
+          </View>
+          <Text style={tw`text-white font-bold pl-2`}>Page: {currentPage}</Text>
+          {/* Activity Loader or FlatList */}
+          {isLoading ? (
+            <ActivityIndicator size="large" color="#DB202C" />
+          ) : (
+            <FlatList
+              data={searchResults}
+              keyExtractor={(item) => item.id}
+              renderItem={renderItem}
+              contentContainerStyle={tw`pb-96`}
+              showsVerticalScrollIndicator={false}
+            />
+          )}
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
