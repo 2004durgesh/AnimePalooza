@@ -88,7 +88,7 @@ const NewsInfo = ({ route, navigation }) => {
             </View>
             {/* Anime Intro */}
             <View>
-              <Text style={tw`text-[#D3D3D3] px-2 text-justify text-base my-1`} numberOfLines={3} ellipsizeMode='tail'>
+              <Text style={tw`text-[#D3D3D3] px-2 text-justify text-base my-1`} numberOfLines={3}>
                 Intro: {searchResults.intro}
               </Text>
             </View>

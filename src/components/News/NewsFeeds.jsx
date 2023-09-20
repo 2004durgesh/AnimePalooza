@@ -41,10 +41,10 @@ const NewsFeeds = ({ navigation }) => {
         <View style={tw`flex-1`}>
           <Image source={{ uri: item.thumbnail }} style={tw`h-96 rounded-md`} />
           <View style={tw`ml-4`}>
-            <Text style={tw`font-bold text-xl mb-1`} numberOfLines={2} ellipsizeMode="tail">
+            <Text style={tw`font-bold text-xl mb-1`} numberOfLines={2}>
               {item.title}
             </Text>
-            <Text style={tw`text-base`} numberOfLines={1} ellipsizeMode="tail">
+            <Text style={tw`text-base`} numberOfLines={1}>
               {item.preview.intro}
             </Text>
             <Text style={tw`text-black mb-2`}>{item.uploadedAt} EDT</Text>

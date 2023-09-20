@@ -51,7 +51,7 @@ const GenresAndEpisodes = ({ genres, themes, chapters, provider }) => {
           {chapters.map((ele, index) => (
             <View key={index} style={tw`border-b border-gray-800 p-2 h-18 `}>
               <TouchableOpacity onPress={() => navigation.navigate('MangaChapterPages', { chaptersId: ele.id, provider: provider })}>
-                <Text style={tw`text-white text-lg`} numberOfLines={1} ellipsizeMode="tail">{ele.title}</Text>
+                <Text style={tw`text-white text-lg`} numberOfLines={1}>{ele.title}</Text>
                 <Text style={tw`text-white text-xs text-[#D3D3D3]`}>Chapter Number {ele.chapterNumber} Volume Number{ele.volumeNumber}</Text>
               </TouchableOpacity>
             </View>

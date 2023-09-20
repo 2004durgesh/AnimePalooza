@@ -61,7 +61,7 @@ const imageBackgroundWidth = screenWidth *.3;
             {/* Text and episode number */}
             <LinearGradient colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.5)']} style={{ height: '100%', width: '100%' }}>
               <View style={tw`absolute w-28 h-44 pl-3 -bottom-32`}>
-                <Text style={tw`font-bold text-white`} numberOfLines={2} ellipsizeMode="tail">
+                <Text style={tw`font-bold text-white`} numberOfLines={2}>
                   {item.title}
                 </Text>
                 {/* <Text style={tw`font-bold text-white text-sm`}>Episode {item.episodeNumber}</Text> */}

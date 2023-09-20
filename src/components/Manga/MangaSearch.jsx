@@ -1,4 +1,4 @@
-import { View, Text, FlatList, ActivityIndicator, TextInput, TouchableOpacity,ScrollView } from 'react-native'
+import { View, Text, FlatList, ActivityIndicator, TextInput, TouchableOpacity,ScrollView,Keyboard } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import tw from 'twrnc';
 import { FontAwesome, Ionicons, Fontisto, Feather } from '@expo/vector-icons';
@@ -53,6 +53,15 @@ const MangaSearch = ({ route, navigation }) => {
     if (currentPage > 1) {
       fetchData(currentPage - 1);
     }
+  };
+
+  // Function to handle search
+  const handleSearch = () => {
+    // Dismiss the keyboard
+    Keyboard.dismiss();
+    // Fetch data for the first page
+    setCurrentPage(1);
+    fetchData(1);
   };
 
   // Render each manga item
@@ -119,6 +128,7 @@ const MangaSearch = ({ route, navigation }) => {
             placeholder='Search...'
             value={text}
             placeholderTextColor='#A0AEC0'
+            onSubmitEditing={handleSearch}
           />
           {text !== '' && (
             <Text style={tw`mt-2 text-gray-800 text-lg text-white`}>You searched for: {text.trim()}</Text>

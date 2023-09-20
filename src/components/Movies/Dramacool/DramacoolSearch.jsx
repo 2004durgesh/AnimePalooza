@@ -1,4 +1,4 @@
-import { View, Text, FlatList, ActivityIndicator, TextInput, TouchableOpacity, ImageBackground,Dimensions,ScrollView } from 'react-native'
+import { View, Text, FlatList, ActivityIndicator, TextInput, TouchableOpacity, ImageBackground,Dimensions,ScrollView,Keyboard } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { LinearGradient } from 'expo-linear-gradient';
 import axios from 'axios';
@@ -51,6 +51,15 @@ const DramacoolSearch = ({ navigation }) => {
     }
   };
 
+  // Function to handle search
+  const handleSearch = () => {
+    // Dismiss the keyboard
+    Keyboard.dismiss();
+    // Fetch data for the first page
+    setCurrentPage(1);
+    fetchData(1);
+  };
+
   
 const screenWidth = Dimensions.get('window').width;
 const imageBackgroundWidth = screenWidth * .3;
@@ -64,7 +73,7 @@ const imageBackgroundWidth = screenWidth * .3;
             {/* Text and episode number */}
             <LinearGradient colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.5)']} style={{ height: '100%', width: '100%' }}>
               <View style={tw`absolute w-28 h-44 pl-3 -bottom-32`}>
-                <Text style={tw`font-bold text-white`} numberOfLines={2} ellipsizeMode="tail">
+                <Text style={tw`font-bold text-white`} numberOfLines={2}>
                   {item.title}
                 </Text>
               </View>
@@ -98,6 +107,7 @@ const imageBackgroundWidth = screenWidth * .3;
             placeholder='Search...'
             value={text}
             placeholderTextColor='#A0AEC0'
+            onSubmitEditing={handleSearch}
           />
           {text !== '' && (
             <Text style={tw`mt-2 text-gray-800 text-lg text-white`}>You searched for: {text.trim()}</Text>
