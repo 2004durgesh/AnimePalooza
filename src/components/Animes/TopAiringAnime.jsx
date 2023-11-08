@@ -43,14 +43,12 @@ console.log(Config.API_BASE_URL,Config.API_KEY)
       fetchData(currentPage + 1);
     }
   };
-
   // Function to handle navigation to the previous page
   const handlePrevPage = () => {
     if (currentPage > 1) {
       fetchData(currentPage - 1);
     }
   };
-
 
   // Function to handle item press (can be further implemented)
   const handleItemPress = (url, id) => {

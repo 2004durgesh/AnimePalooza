@@ -40,6 +40,7 @@ const AnimeInfo = ({ route, navigation }) => {
       const { data } = await axios.get(url,{
         headers:{'x-api-key': Config.API_KEY}
       });
+
       // Set anime data to state variables
       setImage(data.image);
       setTitle(data.title);
@@ -55,7 +56,6 @@ const AnimeInfo = ({ route, navigation }) => {
       throw new Error(err.message);
     }
   };
-
 
   // Function to handle the icon click
   const handleIconClick = () => {

@@ -64,7 +64,6 @@ const FlixHQInfo = ({ route, navigation }) => {
         }
     };
 
-
     // Function to handle the icon click
     const handleIconClick = () => {
         // Toggle the description display state on icon click
