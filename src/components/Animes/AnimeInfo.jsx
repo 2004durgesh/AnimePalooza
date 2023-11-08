@@ -88,7 +88,7 @@ const AnimeInfo = ({ route, navigation }) => {
           <ActivityLoader />
           :
           <ScrollView showsVerticalScrollIndicator={false}>
-            <Animated.View entering={FadeInDown.delay(1000)}>
+            <Animated.View>
               {/* Top Image Section */}
               <AnimatedImageBackground sharedTransitionTag="sharedTag" source={{ uri: image }} style={tw`h-96`}>
                 {/* Image Overlay */}

@@ -34,6 +34,7 @@ const SearchBar = ({type,provider}) => {
         setIsLoading(false);
     }
 };
+console.log(text)
 
   useEffect(() => {
     // Fetch data whenever the search text changes
@@ -114,7 +115,7 @@ const SearchBar = ({type,provider}) => {
           <FlatList
             data={searchResults}
             keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => <RenderItemCards item={item} handleItemPress={handleItemPress} />}
+            renderItem={({ item,index }) => <RenderItemCards item={item} index={index} handleItemPress={handleItemPress}/>}
             numColumns={3} // Use the numColumns prop to show 3 items in a row
             contentContainerStyle={tw`pb-96`}
             showsVerticalScrollIndicator={false}

@@ -51,7 +51,7 @@ const TopAiringFlixHQ = ({navigation}) => {
           <FlatList
             data={results}
             keyExtractor={(item) => item.id}
-            renderItem={({ item }) => <RenderItemCards item={item} handleItemPress={handleItemPress}/>}
+            renderItem={({ item,index }) => <RenderItemCards item={item} index={index} handleItemPress={handleItemPress}/>}
             numColumns={3} // Use the numColumns prop to show 3 items in a row
             contentContainerStyle={tw`pb-28`}
             showsVerticalScrollIndicator={false}

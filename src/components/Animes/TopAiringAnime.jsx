@@ -31,7 +31,6 @@ const TopAiringAnime = ({ navigation }) => {
     } 
   };
 
-console.log(Config.API_BASE_URL,Config.API_KEY)
   // Fetch data on component mount and whenever the currentPage changes
   useEffect(() => {
     fetchData(currentPage);

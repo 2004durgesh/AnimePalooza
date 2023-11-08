@@ -67,7 +67,7 @@ const RecentFlixHQMoviesAndShows = ({ typeOfService }) => {
         <FlatList
           data={results}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <RenderItemCards item={item} handleItemPress={handleItemPress}/>}
+          renderItem={({ item,index }) => <RenderItemCards item={item} index={index} handleItemPress={handleItemPress}/>}
           contentContainerStyle={tw`mx-2 mb-10`}
           showsVerticalScrollIndicator={false}
           horizontal={true}
