@@ -2,6 +2,7 @@ import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
 import tw from 'twrnc';
 import { useNavigation } from '@react-navigation/native';
+import Animated,{FadeInLeft, FadeOutRight} from 'react-native-reanimated';
 
 const Recommendations = ({ recommendations }) => {
     const navigation = useNavigation();
@@ -16,11 +17,11 @@ const Recommendations = ({ recommendations }) => {
                     <View style={tw`flex-row`}>
                         {recommendations.map((ele, index) => (
                             // Recommendation Item
-                            <View key={index} style={tw`border p-2 py-3 my-1 h-16`}>
+                            <Animated.View entering={FadeInLeft.delay(200*index)} exiting={FadeOutRight.delay(200*index)} key={index} style={tw`border p-2 py-3 my-1 h-16`}>
                                 <TouchableOpacity onPress={() => navigation.navigate('FlixHQInfo', { id: ele.id })}>
                                     <Image source={{ uri: ele.image }} style={tw`w-32 h-44 rounded-lg`} />
                                 </TouchableOpacity>
-                            </View>
+                            </Animated.View>
                         ))}
                     </View>
                 </View>

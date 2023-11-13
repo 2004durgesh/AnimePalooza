@@ -67,8 +67,8 @@ const FavoriteList = ({ navigation, favoriteType }) => {
     <FlatList
       data={favorites.filter((favorite) => favorite.type === favoriteType)}
       keyExtractor={(item) => item.id}
-      renderItem={({ item }) => (
-        <RenderItemCards item={item} handleItemPress={handleItemPress} />
+      renderItem={({ item,index }) => (
+        <RenderItemCards item={item} index={index} handleItemPress={handleItemPress} />
       )}
       numColumns={3}
       contentContainerStyle={tw`pb-28`}

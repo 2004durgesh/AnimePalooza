@@ -2,6 +2,7 @@ import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import React from 'react';
 import tw from 'twrnc';
 import { useNavigation } from '@react-navigation/native';
+import Animated,{FadeInLeft, FadeOutRight} from 'react-native-reanimated';
 
 const GenresAndEpisodes = ({ genres, themes, chapters, provider }) => {
   const navigation = useNavigation();
@@ -14,9 +15,9 @@ const GenresAndEpisodes = ({ genres, themes, chapters, provider }) => {
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
           <View style={tw`flex-row`}>
             {genres.map((ele, index) => (
-              <View key={index} style={tw`border p-2 h-10 rounded-md mx-1 bg-gray-700`}>
+              <Animated.View entering={FadeInLeft.delay(200*index)} exiting={FadeOutRight.delay(200*index)} key={index} style={tw`border p-2 h-10 rounded-md mx-1 bg-gray-700`}>
                 <Text style={tw`text-white`}>{ele}</Text>
-              </View>
+              </Animated.View>
             ))}
           </View>
         </ScrollView>
@@ -32,9 +33,9 @@ const GenresAndEpisodes = ({ genres, themes, chapters, provider }) => {
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
           <View style={tw`flex-row`}>
             {themes.map((ele, index) => (
-              <View key={index} style={tw`border p-2 h-10 rounded-md mx-1 bg-gray-700`}>
+              <Animated.View entering={FadeInLeft.delay(200*index)} exiting={FadeOutRight.delay(200*index)} key={index} style={tw`border p-2 h-10 rounded-md mx-1 bg-gray-700`}>
                 <Text style={tw`text-white`}>{ele}</Text>
-              </View>
+              </Animated.View>
             ))}
           </View>
         </ScrollView>
@@ -49,12 +50,12 @@ const GenresAndEpisodes = ({ genres, themes, chapters, provider }) => {
         <View>
           <Text style={tw`text-white text-xl p-2 pt-4 font-semibold`}>{chapters.length} Chapters</Text>
           {chapters.map((ele, index) => (
-            <View key={index} style={tw`border-b border-gray-800 p-2 h-18 `}>
+            <Animated.View entering={FadeInLeft.delay(200*index)} exiting={FadeOutRight.delay(200*index)} key={index} style={tw`border-b border-gray-800 p-2 h-18 `}>
               <TouchableOpacity onPress={() => navigation.navigate('MangaChapterPages', { chaptersId: ele.id, provider: provider })}>
                 <Text style={tw`text-white text-lg`} numberOfLines={1}>{ele.title}</Text>
                 <Text style={tw`text-white text-xs text-[#D3D3D3]`}>Chapter Number {ele.chapterNumber} Volume Number{ele.volumeNumber}</Text>
               </TouchableOpacity>
-            </View>
+            </Animated.View>
           ))}
         </View>
       </ScrollView>

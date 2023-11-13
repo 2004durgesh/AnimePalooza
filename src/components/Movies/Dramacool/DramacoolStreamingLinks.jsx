@@ -39,11 +39,6 @@ const DramacoolStreamingLinks = ({ route, navigation }) => {
 
     return (
         <SafeAreaView style={tw`bg-black flex-1`}>
-            {/* Header with Back Button */}
-            <View style={tw`flex-row justify-between`}>
-                <Ionicons name="arrow-back-circle-sharp" size={40} color="white" style={tw`m-6`} onPress={() => { navigation.goBack() }}
-                />
-            </View>
             <VideoPlayer src={streamingSource} title={`Episode Number: ${episodeNumber}`} provider='dramacool' />
         </SafeAreaView>
     );

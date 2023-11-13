@@ -54,12 +54,14 @@ const FlixHQStreamingLinks = ({ route, navigation }) => {
                 const initialQuality = data.sources[0].quality; // Access quality from data
                 setStreamingQuality(initialQuality); // Set the initial quality
                 setStreamingSource(data.sources[0].url); // Set the initial source
+                console.log(data)
                 return data;
             } catch (err) {
                 throw new Error(err.message);
             }
         };
         fetchData();
+        console.log(url)
     }, [episodeId, mediaId, selectedServer]);
     return (
         <SafeAreaView style={tw`bg-black flex-1`}>

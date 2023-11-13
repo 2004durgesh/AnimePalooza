@@ -2,6 +2,8 @@ import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import React from 'react';
 import tw from 'twrnc';
 import { useNavigation } from '@react-navigation/native';
+import Animated,{FadeInLeft, FadeOutRight} from 'react-native-reanimated';
+
 
 const GenresAndEpisodes = ({ genres, episodes, mediaId, type }) => {
     const navigation = useNavigation();
@@ -17,9 +19,9 @@ const GenresAndEpisodes = ({ genres, episodes, mediaId, type }) => {
                     <View style={tw`flex-row mt-4`}>
                         {genres.map((ele, index) => (
                             // Genre Tag
-                            <View key={index} style={tw`border p-2 h-10 rounded-md mx-1 bg-gray-700`}>
+                            <Animated.View entering={FadeInLeft.delay(200*index)} exiting={FadeOutRight.delay(200*index)} key={index} style={tw`border p-2 h-10 rounded-md mx-1 bg-gray-700`}>
                                 <Text style={tw`text-white`}>{ele}</Text>
-                            </View>
+                            </Animated.View>
                         ))}
                     </View>
                 </ScrollView>
@@ -36,12 +38,12 @@ const GenresAndEpisodes = ({ genres, episodes, mediaId, type }) => {
                     <Text style={tw`text-white text-xl p-2 pt-4 font-semibold`}>{episodes.length} Episodes</Text>
                     {episodes.map((ele, index) => (
                         // Episode Item
-                        <View key={index} style={tw`border-b border-gray-800 p-2 py-3 my-1 h-16`}>
+                        <Animated.View entering={FadeInLeft.delay(200*index)} exiting={FadeOutRight.delay(200*index)} key={index} style={tw`border-b border-gray-800 p-2 py-3 my-1 h-16`}>
                             <TouchableOpacity onPress={() => navigation.navigate('FlixHQStreamingLinks', { episodeId: ele.id, mediaId: mediaId, episodeTitle: ele.title })}>
                                 <Text style={tw`text-white text-lg`} numberOfLines={1}>{ele.title}</Text>
                                 {type === 'TV Series' ? <Text style={tw`text-white text-xs text-[#D3D3D3]`}>Episode {ele.number} Season{ele.season}</Text> : null}
                             </TouchableOpacity>
-                        </View>
+                        </Animated.View>
                     ))}
                 </View>
             </ScrollView>

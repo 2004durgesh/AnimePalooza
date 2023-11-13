@@ -11,7 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import GenresAndEpisodes from './GenresAndEpisodes';
 import ActivityLoader from '../ActivityLoader';
 import FavoritesButton from '../FavoritesButton';
-import  Animated, { FadeInDown }  from 'react-native-reanimated';
+import  Animated, { FadeInDown, FadeInUp }  from 'react-native-reanimated';
 import Config from "../constants/env.config";
 
 
@@ -88,7 +88,7 @@ const AnimeInfo = ({ route, navigation }) => {
           <ActivityLoader />
           :
           <ScrollView showsVerticalScrollIndicator={false}>
-            <Animated.View>
+            <Animated.View entering={FadeInUp.delay(200)}>
               {/* Top Image Section */}
               <AnimatedImageBackground sharedTransitionTag="sharedTag" source={{ uri: image }} style={tw`h-96`}>
                 {/* Image Overlay */}
@@ -101,7 +101,7 @@ const AnimeInfo = ({ route, navigation }) => {
                   {/* Anime Details */}
                   <View style={tw`flex flex-row mx-2`}>
                     {/* Anime Image */}
-                    <Image source={{ uri: image }} style={tw`w-32 h-44 rounded-md`} />
+                    <Image source={{ uri: image }} style={tw`w-32 h-44 rounded-md`}/>
                     <View style={tw`px-4 flex-1`}>
                       {/* Anime Title */}
                       <Text style={tw`text-white text-xl`} selectable={true}>{title}</Text>

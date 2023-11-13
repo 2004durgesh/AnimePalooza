@@ -15,9 +15,9 @@ const GenresAndEpisodes = ({ genres, episodes }) => {
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
           <View style={tw`flex-row`}>
             {genres.map((ele, index) => (
-              <View key={index} style={tw`border p-2 h-10 rounded-md mx-1 bg-gray-700`}>
+              <Animated.View entering={FadeInLeft.delay(200*index)} exiting={FadeOutRight.delay(200*index)} key={index} style={tw`border p-2 h-10 rounded-md mx-1 bg-gray-700`}>
                 <Text style={tw`text-white`}>{ele}</Text>
-              </View>
+              </Animated.View>
             ))}
           </View>
         </ScrollView>
@@ -32,7 +32,7 @@ const GenresAndEpisodes = ({ genres, episodes }) => {
         <View >
           <Text style={tw`text-white text-xl p-2 pt-4 font-semibold`}>{episodes.length} Episodes</Text>
           {episodes.map((ele, index) => (
-            <Animated.View entering={FadeInLeft.delay(500*index)} exiting={FadeOutRight.delay(500*index)} key={index} style={tw`border-b border-gray-800 p-2 py-3 my-1 h-16`}>
+            <Animated.View entering={FadeInLeft.delay(200*index)} exiting={FadeOutRight.delay(200*index)} key={index} style={tw`border-b border-gray-800 p-2 py-3 my-1 h-16`}>
               <TouchableOpacity onPress={() => navigation.navigate('AnimeEpisodeStreamingLinks', { episodeId: ele.id,episodeNumber:ele.number })}>
                 <Text style={tw`text-white text-lg`}>Episode {ele.number}</Text>
               </TouchableOpacity>

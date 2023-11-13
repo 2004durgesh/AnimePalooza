@@ -30,7 +30,6 @@ const TopAiringAnime = ({ navigation }) => {
       console.error('Error fetching data:', err);
     } 
   };
-
   // Fetch data on component mount and whenever the currentPage changes
   useEffect(() => {
     fetchData(currentPage);

@@ -1,14 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Dimensions, Text, Image, TouchableOpacity, ActivityIndicator, Linking, ToastAndroid, } from 'react-native';
+import { View, Dimensions, Text, Image, TouchableOpacity, ActivityIndicator, Linking, ToastAndroid, ScrollView, StatusBar } from 'react-native';
 import axios from 'axios';
 import tw from 'twrnc';
 import Config from "../constants/env.config";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Octicons from 'react-native-vector-icons/Octicons';
-import { SafeAreaView,SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { useIsFocused } from '@react-navigation/native';
 import { Overlay, ListItem, CheckBox } from '@rneui/themed';
 import VideoPlayer from '../VideoPlayer';
+
 
 const serverOptions = ["gogocdn", "streamsb", "vidstreaming"];
 
@@ -27,15 +28,6 @@ const AnimeEpisodeStreamingLinks = ({ route, navigation }) => {
     const toggleOverlay = () => {
         setVisible(!visible);
     };
-
-
-    // Function to handle opening the download link
-    const handleOpenLink = () => {
-        Linking.openURL(downloadLinks).catch((err) =>
-            console.error('An error occurred: ', err)
-        );
-    };
-
 
     // Fetch streaming links on component mount
     useEffect(() => {
@@ -63,17 +55,9 @@ const AnimeEpisodeStreamingLinks = ({ route, navigation }) => {
     }, [episodeId, selectedServer]);
 
     return (
-        <SafeAreaView style={tw`bg-black flex-1`}>
-            <View style={tw`bg-black flex-1`}>
-                {/* Header with Back Button */}
-                <View style={tw`flex-row items-center justify-between px-5 my-5`}>
-                    <Ionicons name="arrow-back-circle-sharp" size={40} color="white" style={tw`m-6`} onPress={() => { navigation.goBack() }} />
-                    <View style={tw`flex-row gap-4`}>
-                        <Octicons name="download" size={35} color="white" onPress={handleOpenLink} />
-                        <Octicons name="gear" size={35} color="white" onPress={toggleOverlay} />
-                    </View>
-                </View>
-                {/* Overlay for quality selection */}
+        <SafeAreaView style={tw`bg-white flex-1`}>
+            {/* Header with Back Button */}
+            <ScrollView style={tw`bg-black flex-1`}>
                 <Overlay
                     isVisible={visible}
                     onBackdropPress={toggleOverlay}
@@ -129,16 +113,10 @@ const AnimeEpisodeStreamingLinks = ({ route, navigation }) => {
                                 ))}
                             </View>
                         </ListItem.Accordion>
-                        <TouchableOpacity
-                            style={tw`bg-[#DB202C] py-2 px-4 mt-4 rounded-md`}
-                            onPress={toggleOverlay}
-                        >
-                            <Text style={tw`text-white text-center`}>Back</Text>
-                        </TouchableOpacity>
                     </View>
                 </Overlay>
-                <VideoPlayer src={streamingSource} quality={streamingQuality} title={`Episode Number: ${episodeNumber}`} provider='gogoanime' />
-            </View>
+                <VideoPlayer src={streamingSource} downloadLinks={downloadLinks} quality={streamingQuality} title={`Episode Number: ${episodeNumber}`} provider='gogoanime' />
+            </ScrollView>
         </SafeAreaView>
     );
 };
