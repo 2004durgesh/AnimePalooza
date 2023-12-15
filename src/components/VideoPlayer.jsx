@@ -1,26 +1,20 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, TouchableOpacity, ActivityIndicator, ToastAndroid, StatusBar, Linking } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator, ToastAndroid, StatusBar, Linking, ScrollView, TouchableWithoutFeedback } from 'react-native';
 import Video from 'react-native-video';
 import Orientation from 'react-native-orientation-locker';
+import Config from "./constants/env.config";
+import axios from 'axios';
 import moment from 'moment';
 import Slider from '@react-native-community/slider';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import tw from 'twrnc';
 import { Overlay, ListItem, CheckBox } from '@rneui/themed';
-import Animated,{
-    FadeIn,
-    FadeInDown,
-    FadeInLeft,
-    FadeInUp,
-    FadeOut,
-    FadeOutDown,
-    FadeOutLeft,
-    FadeOutUp,
-  } from 'react-native-reanimated';
+import Animated, { FadeIn, FadeInDown, FadeInUp, FadeOut, FadeOutDown, FadeOutUp, } from 'react-native-reanimated';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import ActivityLoader from './ActivityLoader';
 
-
-const VideoPlayer = ({ src, downloadLinks, title }) => {
+const VideoPlayer = ({ route, type, provider, server }) => {
     const videoRef = useRef(null);
     const [controlsVisible, setControlsVisible] = useState(true);
     const [currentTime, setCurrentTime] = useState(0);
@@ -31,10 +25,61 @@ const VideoPlayer = ({ src, downloadLinks, title }) => {
     const [paused, setPaused] = useState(false);
     const [fullscreen, setFullscreen] = useState(false);
     const [visible, setVisible] = useState(false);
-    const [expanded, setExpanded] = useState(false);
+    const [expanded, setExpanded] = useState(true);
+    const [downloadLinks, setDownloadLinks] = useState('');
     const [selectedIndex, setSeletedIndex] = useState(0);
+    const [streamingSource, setStreamingSource] = useState('');
+    const [streamingLinks, setStreamingLinks] = useState([]);
+    const [streamingQuality, setStreamingQuality] = useState('');
+    const [selectedServer, setSelectedServer] = useState("");
+    const [isLoading, setIsLoading] = useState(true)
+    const { episodeId, mediaId, episodeNumber, title } = route
+    const [watchTime, setWatchTime] = useState([])
+    const [isWatched, setIsWatched] = useState(false)
 
-    const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
+    const watchedInfo = {
+        episodeId,
+        mediaId: mediaId || null,
+        title,
+        type,
+        provider,
+        currentTime: currentTime,
+    };
+    // Fetch streaming links on component mount
+    useEffect(() => {
+        // API URL to fetch streaming links for the episode
+        let url
+        if (type === 'movies') {
+            url = `${Config.API_BASE_URL}/${type}/${provider}/watch?episodeId=${episodeId}&mediaId=${mediaId}`;
+        } else {
+            url = `${Config.API_BASE_URL}/${type}/${provider}/watch/${episodeId}?server=${selectedServer || "gogocdn"}`;
+        }
+        // Function to fetch streaming links from the API
+        const fetchData = async () => {
+            try {
+                const { data } = await axios.get(url, {
+                    headers: { 'x-api-key': Config.API_KEY }
+                });
+                console.log(data, url)
+                setStreamingLinks(data.sources);
+                setDownloadLinks(data.download);
+                const initialQuality = data.sources[3].quality; // Access quality from data
+                setStreamingQuality(initialQuality); // Set the initial quality
+                setSeletedIndex(3); // Set the initial index
+                if (provider === "gogoanime") setStreamingSource(data.sources[3].url);
+                else if (provider === "dramacool") setStreamingSource(data.sources[1].url);
+                else setStreamingSource(data.sources[0].url);
+                setIsLoading(false)
+                return data;
+            } catch (err) {
+                throw new Error(err.message);
+            } finally {
+                setIsLoading(false)
+            }
+        };
+        fetchData();
+    }, [episodeId, selectedServer]);
+    console.log(streamingSource)
     // Function to toggle the overlay
     const toggleOverlay = () => {
         setVisible(!visible);
@@ -62,7 +107,9 @@ const VideoPlayer = ({ src, downloadLinks, title }) => {
         setDurationToDisplay(formatDuration(moment.duration(seekableDuration, 'seconds')));
         setCurrentTime(currentTime);
         setSeekableDuration(seekableDuration);
+        // addToWatchTimeHandler()
         setProgress(parseInt((currentTime / seekableDuration) * 100));
+        // console.log('call hua')
     };
 
     // Helper function to format duration
@@ -92,24 +139,71 @@ const VideoPlayer = ({ src, downloadLinks, title }) => {
 
     useEffect(() => {
         let timer;
-        if (controlsVisible) {
-            timer = setTimeout(() => {
-                setControlsVisible(false);
-            }, 5000);
-        }
+        // if (controlsVisible) {
+        //     timer = setTimeout(() => {
+        //         setControlsVisible(false);
+        //     }, 5000);
+        // }
         return () => {
             clearTimeout(timer);
         };
     }, [controlsVisible]);
 
     useEffect(() => {
+        const fetchWatchTimeData = async () => {
+            try {
+                const storedData = await AsyncStorage.getItem('watched');
+                console.log('Stored Data:', storedData);
+                if (storedData) {
+                    const parsedData = JSON.parse(storedData);
+                    console.log('Parsed Data:', parsedData[parsedData.length - 1]);
+                    console.log((parsedData[parsedData.length - 1].currentTime))
+                    setWatchTime(parsedData);
+                    if (videoRef.current) {
+                        videoRef.current.seek((parsedData[parsedData.length - 1].currentTime));
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching watch time data:', error);
+            }
+        };
+
+        fetchWatchTimeData();
         return () => {
             // Clean up listeners when the component unmounts
             Orientation.lockToPortrait();
             StatusBar.setHidden(false)
-
+            StatusBar.setTranslucent(false)
         };
     }, []);
+
+    useEffect(() => {
+        setIsWatched(watchTime.some(watched => watched.episodeId === episodeId));
+        console.log('isWatched', watchTime.some(watched => watched.episodeId === episodeId), episodeId)
+
+        const addToWatchTimeHandler = async () => {
+            try {
+                if (isWatched) {
+                    const newWatchTime = watchTime.filter(watched => watched.episodeId !== episodeId);
+                    console.log('Removing episode from watch time. New watch time:', newWatchTime, currentTime);
+                    await AsyncStorage.setItem('watched', JSON.stringify(newWatchTime));
+                    // setWatchTime(newWatchTime);
+                } else {
+                    watchTime.push(watchedInfo);
+                    // watchTime.shift();
+                    console.log('Adding episode to watch time. New watch time:', watchTime, currentTime);
+                    await AsyncStorage.setItem('watched', JSON.stringify(watchTime));
+                    // setWatchTime(watchTime);
+                    
+                }
+                console.log("watch time", watchTime)
+            } catch (error) {
+                console.error('Error updating watch time:', error);
+            }
+        };
+
+        addToWatchTimeHandler();
+    }, [episodeId, watchTime]);
 
     // Handle entering fullscreen
     const handlePresentFullscreen = () => {
@@ -117,6 +211,8 @@ const VideoPlayer = ({ src, downloadLinks, title }) => {
             videoRef.current.presentFullscreenPlayer();
             Orientation.lockToLandscape();
         }
+        StatusBar.setHidden(true)
+        StatusBar.setTranslucent(true)
         setFullscreen(true);
     };
 
@@ -126,7 +222,8 @@ const VideoPlayer = ({ src, downloadLinks, title }) => {
             videoRef.current.dismissFullscreenPlayer();
             Orientation.lockToPortrait();
         }
-        StatusBar.setHidden(true)
+        StatusBar.setHidden(false)
+        StatusBar.setTranslucent(false)
         setFullscreen(false);
     };
 
@@ -154,13 +251,63 @@ const VideoPlayer = ({ src, downloadLinks, title }) => {
 
     return (
         <View style={tw``}>
-            <StatusBar barStyle="dark-content" />
+            <StatusBar backgroundColor='black' />
             <Overlay
                 isVisible={visible}
                 onBackdropPress={toggleOverlay}
                 style={tw`justify-center items-center`}
             >
-
+                <ScrollView style={tw`p-2 w-84 max-h-96`}>
+                    <View>
+                        {streamingLinks.map((source, index) => (
+                            <View key={index}>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        setStreamingSource(source.url);
+                                        setStreamingQuality(source.quality);
+                                        setSeletedIndex(index);
+                                    }}
+                                    style={tw`p-2 flex-row justify-between items-center`}
+                                >
+                                    <Text style={tw`text-[#DB202C]`}>Quality: {source.quality}</Text>
+                                    <CheckBox
+                                        checked={selectedIndex === index}
+                                        checkedIcon="dot-circle-o"
+                                        uncheckedIcon="circle-o"
+                                        center={true}
+                                        containerStyle={tw`-p-1`}
+                                        checkedColor="#DB202C"
+                                        onPress={() => {
+                                            setStreamingSource(source.url);
+                                            setStreamingQuality(source.quality);
+                                            setSeletedIndex(index);
+                                        }} />
+                                </TouchableOpacity>
+                            </View>
+                        ))}
+                    </View>
+                    <ListItem.Accordion
+                        content={
+                            <ListItem.Content>
+                                <ListItem.Title style={tw`text-[#DB202C]`}>Select a server</ListItem.Title>
+                            </ListItem.Content>
+                        }
+                        isExpanded={expanded}
+                        onPress={() => {
+                            setExpanded(!expanded);
+                        }}
+                    >
+                        <View style={tw`flex flex-row flex-wrap gap-1`}>
+                            {server.map((server) => (
+                                <View key={server}>
+                                    <TouchableOpacity style={[tw`p-2 rounded-full`, { borderWidth: 1, borderColor: 'red', }]} onPress={() => setSelectedServer(server)}>
+                                        <ListItem.Title style={tw`text-red-500 capitalize`}>{server}</ListItem.Title>
+                                    </TouchableOpacity>
+                                </View>
+                            ))}
+                        </View>
+                    </ListItem.Accordion>
+                </ScrollView>
             </Overlay>
             <TouchableOpacity
                 onPress={toggleControls}
@@ -170,7 +317,7 @@ const VideoPlayer = ({ src, downloadLinks, title }) => {
             >
                 <View style={tw`relative h-105`}>
                     <Video
-                        source={{ uri: src }}
+                        source={{ uri: streamingSource }}
                         style={tw`absolute top-0 left-0 right-0 bottom-0 z-10`}
                         paused={paused}
                         ref={videoRef}
@@ -181,7 +328,6 @@ const VideoPlayer = ({ src, downloadLinks, title }) => {
                         onFullscreenPlayerDidDismiss={handleDismissFullscreen}
                         onProgress={handleOnProgress}
                         progressUpdateInterval={1000}
-                    // resizeMode={fullscreen ? "contain" : "contain"}
                     />
                     {controlsVisible && (
                         <View style={tw`bg-transparent absolute top-0 left-0 right-0 bottom-0 h-65 z-50`}>
@@ -190,29 +336,34 @@ const VideoPlayer = ({ src, downloadLinks, title }) => {
                                     entering={FadeInUp.delay(10)}
                                     exiting={FadeOutUp.delay(10)}
                                     style={tw`flex-row justify-between px-4 items-center ${fullscreen ? 'w-180' : 'w-full'} -top-10`}>
-                                    <Text style={tw`text-white font-bold w-80 mr-auto`} numberOfLines={1}>{title}</Text>
+                                    <View>
+                                        <Text style={tw`text-white font-bold w-80 mr-auto`} numberOfLines={1}>{title}</Text>
+                                        <Text style={tw`text-gray-500 mr-auto`} numberOfLines={1}>Episode Number: {episodeNumber}</Text>
+                                    </View>
                                     <View style={tw`flex-row items-center gap-4 ml-auto`}>
                                         <Ionicons name='download-outline' color='#DB202C' size={30} style={tw``} onPress={handleOpenLink} />
                                         <Ionicons name='settings-outline' color='#DB202C' size={30} style={tw``} onPress={toggleOverlay} />
                                     </View>
                                 </Animated.View>
                                 <Animated.View entering={FadeIn.delay(10)} exiting={FadeOut.delay(10)} style={tw`flex-row justify-evenly items-center w-50 top-20`}>
-                                    <MaterialIcons name='replay-10' color='#DB202C' size={30} onPress={() => { videoRef.current.seek(currentTime - 10) }} />
-                                    <Ionicons name={paused ? 'play-outline' : 'pause-outline'} color='#DB202C' size={30} onPress={handlePlayPause} />
-                                    <MaterialIcons name='forward-10' color='#DB202C' size={30} onPress={() => { videoRef.current.seek(currentTime + 10) }} />
+                                    {isLoading ?
+                                        <ActivityLoader />
+                                        : <>
+                                            <MaterialIcons name='replay-10' color='#DB202C' size={30} onPress={() => { videoRef.current.seek(currentTime - 10) }} />
+                                            <Ionicons name={paused ? 'play-outline' : 'pause-outline'} color='#DB202C' size={30} onPress={handlePlayPause} />
+                                            <MaterialIcons name='forward-10' color='#DB202C' size={30} onPress={() => { videoRef.current.seek(currentTime + 10) }} />
+                                        </>}
                                 </Animated.View>
-                                <AnimatedTouchableOpacity
-                                entering={FadeIn}
-                                exiting={FadeOut}
+                                <TouchableOpacity
                                     style={tw`bg-red-500 w-20 justify-center items-center py-2 rounded-full ${fullscreen ? '-bottom-45 -left-60' : '-bottom-25 -left-40'} `}
                                     onPress={() => { videoRef.current.seek(currentTime + 85) }}
                                 >
                                     <Text style={tw`text-white font-semibold`}>+85s</Text>
-                                </AnimatedTouchableOpacity>
-                                <Animated.View 
-                                entering={FadeInDown.delay(10)}
-                                exiting={FadeOutDown.delay(10)}
-                                style={tw`flex-row items-center justify-center ${fullscreen ? '-bottom-45' : '-bottom-25'}`}>
+                                </TouchableOpacity>
+                                <Animated.View
+                                    entering={FadeInDown.delay(10)}
+                                    exiting={FadeOutDown.delay(10)}
+                                    style={tw`flex-row items-center justify-center ${fullscreen ? '-bottom-45' : '-bottom-25'}`}>
                                     <Text style={tw`text-white font-semibold`}>{currentTimeToDisplay}</Text>
                                     <Slider
                                         style={tw`h-10 ${fullscreen ? 'w-150 -mx-2' : 'w-70'}`}
@@ -222,6 +373,7 @@ const VideoPlayer = ({ src, downloadLinks, title }) => {
                                         minimumTrackTintColor="#DB202C"
                                         maximumTrackTintColor="#000000"
                                         thumbTintColor="#DB202C"
+                                        tapToSeek={true}
                                         onValueChange={(value) => {
                                             setProgress(value);
                                         }}
@@ -239,6 +391,7 @@ const VideoPlayer = ({ src, downloadLinks, title }) => {
                     )}
                 </View>
             </TouchableOpacity>
+            <Text style={tw`text-center font-bold bg-red-500 ${fullscreen ? 'hidden' : ''}`}>Try Changing Quality or Server if video doesn't plays</Text>
         </View>
     );
 };

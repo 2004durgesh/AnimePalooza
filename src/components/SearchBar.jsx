@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import tw from 'twrnc';
 import _ from 'lodash'; // Import Lodash
+import { Searchbar } from 'react-native-paper';
 import Config from "./constants/env.config";
 import PageNavigation from './PageNavigation';
 import RenderItemCards from './RenderItemCards';
@@ -19,9 +20,6 @@ const SearchBar = ({ type, provider }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const url = `${Config.API_BASE_URL}/${type}/${provider}/${text}`;
-
-  // Debounce the fetchData function
-  const debouncedFetchData = _.debounce(fetchData, 1000); // Set the debounce time (1000 milliseconds)
 
   // Function to fetch search results from the API
   async function fetchData(page) {
@@ -41,10 +39,12 @@ const SearchBar = ({ type, provider }) => {
       setIsLoading(false);
     }
   }
+  const debouncedFetch = _.debounce(fetchData, 2000);
   useEffect(() => {
     // Fetch data whenever the search text changes
     if (text !== '') {
-      debouncedFetchData(currentPage);
+      // _.debounce(fetchData(currentPage),2000);
+      debouncedFetch(currentPage);
     } else {
       // Clear the search results when the search text is empty
       setSearchResults([]);
@@ -71,8 +71,11 @@ const SearchBar = ({ type, provider }) => {
     Keyboard.dismiss();
     // Fetch data for the first page
     setCurrentPage(1);
+    console.log('handleSearch function called')
     fetchData(1);
   };
+
+  const debouncedSearch = _.debounce(handleSearch, 1000);
 
   // Function to handle item press (can be further implemented)
   const handleItemPress = (url, id) => {
@@ -99,18 +102,15 @@ const SearchBar = ({ type, provider }) => {
     <SafeAreaView style={tw`bg-black flex-1`}>
       <View style={tw`p-2 mx-2 w-full mx-auto`}>
         {/* Search Input */}
-        <TextInput
-          style={tw`h-16 p-2 border-b-2 border-gray-300 text-white`}
+        <Searchbar
+          placeholder="Search"
           onChangeText={(text) => {
             onChangeText(text);
-            debouncedFetchData(currentPage);
           }}
-          placeholder="Search..."
           value={text}
-          placeholderTextColor="#A0AEC0"
-          onSubmitEditing={handleSearch}
+          onIconPress={() => debouncedSearch()}
+          style={tw`bg-black h-16 m-2 border-2 border-gray-300 text-white`}
         />
-
         {text !== '' && (
           <Text style={tw`mt-2 text-gray-800 text-lg text-white`}>You searched for: {text.trim()}</Text>
         )}

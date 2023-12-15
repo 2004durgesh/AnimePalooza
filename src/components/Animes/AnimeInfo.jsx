@@ -11,9 +11,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import GenresAndEpisodes from './GenresAndEpisodes';
 import ActivityLoader from '../ActivityLoader';
 import FavoritesButton from '../FavoritesButton';
-import  Animated, { FadeInDown, FadeInUp }  from 'react-native-reanimated';
+import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import Config from "../constants/env.config";
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AnimeInfo = ({ route, navigation }) => {
   // Extracting 'id' from the 'route.params' or using an empty object if not available
@@ -37,8 +37,8 @@ const AnimeInfo = ({ route, navigation }) => {
   // Function to fetch data from the API
   const fetchData = async () => {
     try {
-      const { data } = await axios.get(url,{
-        headers:{'x-api-key': Config.API_KEY}
+      const { data } = await axios.get(url, {
+        headers: { 'x-api-key': Config.API_KEY }
       });
 
       // Set anime data to state variables
@@ -80,7 +80,7 @@ const AnimeInfo = ({ route, navigation }) => {
       Alert.alert(error.message);
     }
   };
-
+  
   return (
     <>
       <SafeAreaView style={tw`bg-black flex-1`}>
@@ -101,7 +101,7 @@ const AnimeInfo = ({ route, navigation }) => {
                   {/* Anime Details */}
                   <View style={tw`flex flex-row mx-2`}>
                     {/* Anime Image */}
-                    <Image source={{ uri: image }} style={tw`w-32 h-44 rounded-md`}/>
+                    <Image source={{ uri: image }} style={tw`w-32 h-44 rounded-md`} />
                     <View style={tw`px-4 flex-1`}>
                       {/* Anime Title */}
                       <Text style={tw`text-white text-xl`} selectable={true}>{title}</Text>
@@ -115,7 +115,7 @@ const AnimeInfo = ({ route, navigation }) => {
                           )}
                           <Text style={tw`text-[#D3D3D3] text-xs px-2`}>{status}</Text>
                         </View>
-                        <FavoritesButton type="anime" id={id} title={title} image={image}/>
+                        <FavoritesButton type="anime" id={id} title={title} image={image} />
                       </View>
                     </View>
                   </View>
@@ -163,7 +163,7 @@ const AnimeInfo = ({ route, navigation }) => {
                         </MotiView>
                       </TouchableOpacity>
                       {/* Render Genres and Episodes */}
-                      <GenresAndEpisodes genres={genres} episodes={episodes} />
+                      <GenresAndEpisodes genres={genres} episodes={episodes} title={title} />
                     </LinearGradient>
                   </MotiView>
                 </View>

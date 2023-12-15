@@ -22,8 +22,5 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>
-
-      <!-- fullscreen video -->
-      <activity android:name=".VideoActivity" android:screenOrientation="sensorLandscape" android:configChanges="orientation|screenSize" />
     </application>
 </manifest>

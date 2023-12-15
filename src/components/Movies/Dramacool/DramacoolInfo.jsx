@@ -128,7 +128,7 @@ const DramacoolInfo = ({ route, navigation }) => {
                                             <AntDesign name="down" size={24} color="white" style={tw`text-center pt-3`} />
                                         </MotiView>
                                     </TouchableOpacity>
-                                    <Episodes episodes={episodes} mediaId={id} />
+                                    <Episodes episodes={episodes} mediaId={id} title={title}/>
                                 </LinearGradient>
                             </MotiView>
                         </View>

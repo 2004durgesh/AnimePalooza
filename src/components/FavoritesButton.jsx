@@ -1,4 +1,5 @@
 import { View, Text, TouchableOpacity } from 'react-native'
+import { TouchableRipple } from 'react-native-paper'
 import React, { useState, useEffect } from 'react'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import tw from 'twrnc';
@@ -21,7 +22,6 @@ const FavoritesButton = ({ type, id, title, image, provider }) => {
     };
     const dispatch = useDispatch();
     const state = useSelector((state) => state);
-    console.log('State:', state);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -63,10 +63,15 @@ const FavoritesButton = ({ type, id, title, image, provider }) => {
     const favoriteText = isFavorite ? "Added to Favorites" : "Add to Favorites";
 
     return (
-        <TouchableOpacity style={tw`items-center ml-auto`} onPress={addToFavoritesHandler}>
-            {favoriteIcon}
-            <Text style={tw`text-[#D3D3D3] text-xs px-2`}>{favoriteText}</Text>
-        </TouchableOpacity>
+        <TouchableRipple style={tw`items-center ml-auto w-40 rounded-full p-1`} onPress={addToFavoritesHandler}
+            rippleColor="rgba(219,32,44,1)"
+            borderless={true}
+            >
+            <>
+                {favoriteIcon}
+                <Text style={tw`text-[#D3D3D3] text-xs px-2`}>{favoriteText}</Text>
+            </>
+        </TouchableRipple>
     )
 }
 
