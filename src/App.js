@@ -6,7 +6,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import 'react-native-reanimated'
-import 'react-native-gesture-handler'
+// import 'react-native-gesture-handler'
 import { Provider } from 'react-redux';
 import { PaperProvider } from 'react-native-paper';
 import store from './components/redux/Store';
