@@ -6,12 +6,12 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import 'react-native-reanimated'
-// import 'react-native-gesture-handler'
+import 'react-native-gesture-handler'
 import { Provider } from 'react-redux';
 import { PaperProvider } from 'react-native-paper';
 import store from './components/redux/Store';
 import SplashScreen from 'react-native-splash-screen';
-import NetInfo, { addEventListener } from "@react-native-community/netinfo";
+// import NetInfo, { addEventListener } from "@react-native-community/netinfo";
 
 // Import screen components
 import News from './components/News/News';

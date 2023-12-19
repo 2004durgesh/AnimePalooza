@@ -1,7 +1,10 @@
 # OSX
 #
 .DS_Store
-
+.
+#.env
+#
+.env
 # Xcode
 #
 build/
@@ -39,11 +42,6 @@ local.properties
 node_modules/
 npm-debug.log
 yarn-error.log
-
-#.env
-#
-.env
-.env.production
 
 # fastlane
 #
