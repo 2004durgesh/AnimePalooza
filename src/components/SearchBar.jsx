@@ -17,51 +17,58 @@ const SearchBar = ({ type, provider }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(true);
+  const [error, setError] = useState('');
+  const [currentQuery, setCurrentQuery] = useState('');
 
   const url = `${Config.API_BASE_URL}/${type}/${provider}/${text}`;
 
   // Function to fetch search results from the API
   async function fetchData(page) {
-    console.log('fetchData function called')
-    setIsLoading(true);
     try {
-      const { data } = await axios.get(url, {
-        params: { page: page },
-        headers: { 'x-api-key': Config.API_KEY }
-      });
-      setSearchResults(data.results);
-      setCurrentPage(page);
-      setHasNextPage(data.hasNextPage);
-    } catch (err) {
+      if (text === currentQuery) {
+        const { data } = await axios.get(url, {
+          params: { page: page },
+          headers: { 'x-api-key': Config.API_KEY }
+        });
+        setSearchResults(data.results);
+        setCurrentPage(page);
+        setHasNextPage(data.hasNextPage);
+        console.log('fetchData function called')
+      }
+    }
+    catch (err) {
+      setError(err.message);
       throw new Error(err.message);
     } finally {
-      setIsLoading(false);
+      setIsLoaded(false);
     }
   }
+
   const debouncedFetch = _.debounce(fetchData, 2000);
+
   useEffect(() => {
     // Fetch data whenever the search text changes
     if (text !== '') {
-      // _.debounce(fetchData(currentPage),2000);
+      setCurrentQuery(text);
       debouncedFetch(currentPage);
     } else {
       // Clear the search results when the search text is empty
       setSearchResults([]);
     }
-  }, [text]);
+  }, [text, currentPage]);
 
   // Function to handle navigation to the next page
   const handleNextPage = () => {
     if (hasNextPage) {
-      fetchData(currentPage + 1);
+      setCurrentPage(currentPage + 1);
     }
   };
 
   // Function to handle navigation to the previous page
   const handlePrevPage = () => {
     if (currentPage > 1) {
-      fetchData(currentPage - 1);
+      setCurrentPage(currentPage - 1);
     }
   };
 
@@ -102,22 +109,24 @@ const SearchBar = ({ type, provider }) => {
     <SafeAreaView style={tw`bg-black flex-1`}>
       <View style={tw`p-2 mx-2 w-full mx-auto`}>
         {/* Search Input */}
-        <Searchbar
+        <TextInput
           placeholder="Search"
+          inputMode='search'
           onChangeText={(text) => {
             onChangeText(text);
+            // debouncedSearch();
           }}
           value={text}
-          onIconPress={() => debouncedSearch()}
-          style={tw`bg-black h-16 m-2 border-2 border-gray-300 text-white`}
+          onSubmitEditing={() => debouncedSearch()}
+          style={tw`bg-black h-16 m-2 border-2 border-gray-300 text-white rounded-lg px-4 text-lg`}
         />
         {text !== '' && (
           <Text style={tw`mt-2 text-gray-800 text-lg text-white`}>You searched for: {text.trim()}</Text>
         )}
 
-        {hasNextPage ? <PageNavigation currentPage={currentPage} handlePrevPage={handlePrevPage} handleNextPage={handleNextPage} /> : null}
+        {hasNextPage ? <PageNavigation currentPage={currentPage} handlePrevPage={handlePrevPage} handleNextPage={handleNextPage} isLoaded={isLoaded} error={error} /> : null}
         {/* Activity Loader or FlatList */}
-        {isLoading ? (
+        {isLoaded ? (
           <ActivityLoader style={tw`mt-20`} />
         ) : (
           <FlatList

@@ -14,6 +14,7 @@ const TopAiringAnime = ({ navigation }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
   const [isLoaded, setIsLoaded] = useState(true);
+  const [error, setError] = useState('');
   const url = `${Config.API_BASE_URL}/anime/gogoanime/top-airing`;
   // Function to fetch data from the API
   const fetchData = async (page) => {
@@ -27,7 +28,8 @@ const TopAiringAnime = ({ navigation }) => {
       setHasNextPage(data.hasNextPage);
       setIsLoaded(false); // Show the activity loader
     } catch (err) {
-      console.error('Error fetching data:', err);
+      setError(err.message);
+      console.error('Error fetching data:', err.message);
     } 
   };
   // Fetch data on component mount and whenever the currentPage changes
@@ -59,7 +61,7 @@ const TopAiringAnime = ({ navigation }) => {
 
   return (
     <SafeAreaView style={tw`bg-black flex-1`}>
-        <PageNavigation currentPage={currentPage} handlePrevPage={handlePrevPage} handleNextPage={handleNextPage}/>
+        <PageNavigation currentPage={currentPage} handlePrevPage={handlePrevPage} handleNextPage={handleNextPage} isLoaded={isLoaded} error={error}/>
         {/* FlatList to render the items */}
         {!isLoaded ? (
           // If data is loaded, show the FlatList

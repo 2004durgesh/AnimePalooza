@@ -1,79 +1,79 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Project Title
 
-# Getting Started
+A multi-category entertainment app for streaming anime, manga, dramas, news, and more!
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+## Features
 
-## Step 1: Start the Metro Server
+- **Anime Section**
+  - Discover top airing anime.
+  - Explore anime details, episodes, and recommendations.
+  - Stream anime episodes seamlessly.
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+- **Manga Section**
+  - Find the latest manga chapters.
+  - Read manga details and recommendations.
+  - Stream manga chapters effortlessly.
 
-To start Metro, run the following command from the _root_ of your React Native project:
+- **Dramacool Section**
+  - Access a vast collection of Asian dramas and movies.
+  - Get information, watch streaming links, and explore recommendations.
 
-```bash
-# using npm
-npm start
+- **FlixHQ Section**
+  - Stream global entertainment content.
+  - Explore trending, latest, and search for content.
 
-# OR using Yarn
-yarn start
-```
+- **News Section**
+  - Stay updated with the latest news articles.
 
-## Step 2: Start your Application
+## Screenshots
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
+<!-- Add screenshots or images for each section of your app -->
 
-### For Android
+### Anime Section
 
-```bash
-# using npm
-npm run android
+![Anime Section](path/to/anime_screenshot.png)
 
-# OR using Yarn
-yarn android
-```
+### Manga Section
 
-### For iOS
+![Manga Section](path/to/manga_screenshot.png)
 
-```bash
-# using npm
-npm run ios
+### Dramacool Section
 
-# OR using Yarn
-yarn ios
-```
+![Dramacool Section](path/to/dramacool_screenshot.png)
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+### FlixHQ Section
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+![FlixHQ Section](path/to/flixhq_screenshot.png)
 
-## Step 3: Modifying your App
+### News Section
 
-Now that you have successfully run the app, let's modify it.
+![News Section](path/to/news_screenshot.png)
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+## Demo
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+<!-- Add GIFs or video links to showcase the app in action -->
 
-## Congratulations! :tada:
+![Demo GIF](path/to/demo.gif)
 
-You've successfully run and modified your React Native App. :partying_face:
+## Technologies Used
 
-### Now what?
+- React Native
+- React Navigation
+- Axios
+- Expo
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
+## Download the App
 
-# Troubleshooting
+You can download the latest version of our app from the following link:
 
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+[Download App APK](/android/app/build/outputs/apk/debug/app-debug.apk)
 
-# Learn More
+### Installation Instructions:
 
-To learn more about React Native, take a look at the following resources:
+1. Download the APK file to your Android device.
+2. Open the downloaded APK to start the installation process.
+3. If prompted, enable "Install from Unknown Sources" in your device settings.
+4. Follow the on-screen instructions to complete the installation.
+5. Open the app and enjoy!
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+**Note:** Make sure to download the APK only from the provided link to ensure you have the latest and official version of the app.

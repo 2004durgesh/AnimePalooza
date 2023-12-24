@@ -13,6 +13,7 @@ const RecentFlixHQMoviesAndShows = ({ typeOfService }) => {
   // State to hold the results from the API
   const [results, setResults] = useState([]);
   const [isLoaded, setIsLoaded] = useState(true);
+  const [error, setError] = useState('');
   const [swipeEnabled, setSwipeEnabled] = useState(false);
   const url = `${Config.API_BASE_URL}/movies/flixhq/${typeOfService}`;
 
@@ -31,6 +32,7 @@ const RecentFlixHQMoviesAndShows = ({ typeOfService }) => {
       setResults(data);
       setIsLoaded(false); // Show the activity loader
     } catch (err) {
+      setError(err.message);
       console.error('Error fetching data:', err);
     } finally {
       setIsLoaded(false); // Hide the activity loader after data fetching is done

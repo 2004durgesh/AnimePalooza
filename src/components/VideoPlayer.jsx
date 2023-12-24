@@ -66,9 +66,9 @@ const VideoPlayer = ({ route, type, provider, server }) => {
                 const initialQuality = data.sources[3].quality; // Access quality from data
                 setStreamingQuality(initialQuality); // Set the initial quality
                 setSeletedIndex(3); // Set the initial index
-                if (provider === "gogoanime") setStreamingSource(data.sources[3].url);
-                else if (provider === "dramacool") setStreamingSource(data.sources[1].url);
-                else setStreamingSource(data.sources[0].url);
+                if (provider === "gogoanime") { setStreamingSource(data.sources[3].url); }
+                if (provider === "dramacool") { setStreamingSource(data.sources[1].url); }
+                if (provider === "flixhq") { setStreamingSource(data.sources[0].url); }
                 setIsLoading(false)
                 return data;
             } catch (err) {
@@ -79,7 +79,6 @@ const VideoPlayer = ({ route, type, provider, server }) => {
         };
         fetchData();
     }, [episodeId, selectedServer]);
-    console.log(streamingSource)
     // Function to toggle the overlay
     const toggleOverlay = () => {
         setVisible(!visible);
@@ -139,11 +138,11 @@ const VideoPlayer = ({ route, type, provider, server }) => {
 
     useEffect(() => {
         let timer;
-        // if (controlsVisible) {
-        //     timer = setTimeout(() => {
-        //         setControlsVisible(false);
-        //     }, 5000);
-        // }
+        if (controlsVisible) {
+            timer = setTimeout(() => {
+                setControlsVisible(false);
+            }, 5000);
+        }
         return () => {
             clearTimeout(timer);
         };
@@ -194,7 +193,7 @@ const VideoPlayer = ({ route, type, provider, server }) => {
                     console.log('Adding episode to watch time. New watch time:', watchTime, currentTime);
                     await AsyncStorage.setItem('watched', JSON.stringify(watchTime));
                     // setWatchTime(watchTime);
-                    
+
                 }
                 console.log("watch time", watchTime)
             } catch (error) {
@@ -315,7 +314,7 @@ const VideoPlayer = ({ route, type, provider, server }) => {
                 delayPressOut={100}
                 activeOpacity={1}
             >
-                <View style={tw`relative h-105`}>
+                <View style={tw`relative ${fullscreen ? 'h-full' : 'h-105'} w-full`}>
                     <Video
                         source={{ uri: streamingSource }}
                         style={tw`absolute top-0 left-0 right-0 bottom-0 z-10`}
@@ -328,65 +327,74 @@ const VideoPlayer = ({ route, type, provider, server }) => {
                         onFullscreenPlayerDidDismiss={handleDismissFullscreen}
                         onProgress={handleOnProgress}
                         progressUpdateInterval={1000}
+                        resizeMode="contain"
                     />
                     {controlsVisible && (
-                        <View style={tw`bg-transparent absolute top-0 left-0 right-0 bottom-0 h-65 z-50`}>
-                            <View style={tw`justify-center items-center h-70`}>
-                                <Animated.View
-                                    entering={FadeInUp.delay(10)}
-                                    exiting={FadeOutUp.delay(10)}
-                                    style={tw`flex-row justify-between px-4 items-center ${fullscreen ? 'w-180' : 'w-full'} -top-10`}>
-                                    <View>
-                                        <Text style={tw`text-white font-bold w-80 mr-auto`} numberOfLines={1}>{title}</Text>
-                                        <Text style={tw`text-gray-500 mr-auto`} numberOfLines={1}>Episode Number: {episodeNumber}</Text>
-                                    </View>
-                                    <View style={tw`flex-row items-center gap-4 ml-auto`}>
-                                        <Ionicons name='download-outline' color='#DB202C' size={30} style={tw``} onPress={handleOpenLink} />
-                                        <Ionicons name='settings-outline' color='#DB202C' size={30} style={tw``} onPress={toggleOverlay} />
-                                    </View>
-                                </Animated.View>
-                                <Animated.View entering={FadeIn.delay(10)} exiting={FadeOut.delay(10)} style={tw`flex-row justify-evenly items-center w-50 top-20`}>
-                                    {isLoading ?
-                                        <ActivityLoader />
-                                        : <>
-                                            <MaterialIcons name='replay-10' color='#DB202C' size={30} onPress={() => { videoRef.current.seek(currentTime - 10) }} />
-                                            <Ionicons name={paused ? 'play-outline' : 'pause-outline'} color='#DB202C' size={30} onPress={handlePlayPause} />
-                                            <MaterialIcons name='forward-10' color='#DB202C' size={30} onPress={() => { videoRef.current.seek(currentTime + 10) }} />
-                                        </>}
-                                </Animated.View>
-                                <TouchableOpacity
-                                    style={tw`bg-red-500 w-20 justify-center items-center py-2 rounded-full ${fullscreen ? '-bottom-45 -left-60' : '-bottom-25 -left-40'} `}
-                                    onPress={() => { videoRef.current.seek(currentTime + 85) }}
-                                >
-                                    <Text style={tw`text-white font-semibold`}>+85s</Text>
-                                </TouchableOpacity>
-                                <Animated.View
-                                    entering={FadeInDown.delay(10)}
-                                    exiting={FadeOutDown.delay(10)}
-                                    style={tw`flex-row items-center justify-center ${fullscreen ? '-bottom-45' : '-bottom-25'}`}>
-                                    <Text style={tw`text-white font-semibold`}>{currentTimeToDisplay}</Text>
-                                    <Slider
-                                        style={tw`h-10 ${fullscreen ? 'w-150 -mx-2' : 'w-70'}`}
-                                        minimumValue={0}
-                                        maximumValue={100}
-                                        value={progress}
-                                        minimumTrackTintColor="#DB202C"
-                                        maximumTrackTintColor="#000000"
-                                        thumbTintColor="#DB202C"
-                                        tapToSeek={true}
-                                        onValueChange={(value) => {
-                                            setProgress(value);
-                                        }}
-                                        onSlidingComplete={(value) => {
-                                            if (videoRef.current) {
-                                                videoRef.current.seek((value / 100) * seekableDuration);
-                                            }
-                                        }}
-                                    />
-                                    <Text style={tw`text-white font-semibold`}>{durationToDisplay}</Text>
-                                    <MaterialIcons name={fullscreen ? 'fullscreen-exit' : 'fullscreen'} color='#DB202C' size={30} onPress={handleToggleFullscreen} />
-                                </Animated.View>
+                        <View>
+                            <View style={tw`bg-transparent absolute top-0 left-0 right-0 bottom-0 h-65 z-50`}>
+                                <View style={tw`justify-center items-center h-70`}>
+                                    <Animated.View
+                                        entering={FadeInUp.delay(10)}
+                                        exiting={FadeOutUp.delay(10)}
+                                        style={tw`flex-row justify-between px-4 items-center ${fullscreen ? 'w-180' : 'w-full'} -top-10`}>
+                                        <View>
+                                            <Text style={tw`text-white font-bold w-80 mr-auto`} numberOfLines={1}>{title}</Text>
+                                            {episodeNumber ? <Text style={tw`text-gray-500 mr-auto`} numberOfLines={1}>Episode Number: {episodeNumber}</Text> : null}
+                                        </View>
+                                        <View style={tw`flex-row items-center gap-4 ml-auto`}>
+                                            {downloadLinks ? <Ionicons name='download-outline' color='#DB202C' size={30} style={tw``} onPress={handleOpenLink} /> : null}
+                                            <Ionicons name='settings-outline' color='#DB202C' size={30} style={tw``} onPress={toggleOverlay} />
+                                        </View>
+                                    </Animated.View>
+                                    <Animated.View entering={FadeIn.delay(10)} exiting={FadeOut.delay(10)} style={tw`flex-row justify-evenly items-center w-50 top-20`}>
+                                        {isLoading ?
+                                            <ActivityLoader />
+                                            : <>
+                                                <MaterialIcons name='replay-10' color='#DB202C' size={30} onPress={() => { videoRef.current.seek(currentTime - 10) }} />
+                                                <Ionicons name={paused ? 'play-outline' : 'pause-outline'} color='#DB202C' size={30} onPress={handlePlayPause} />
+                                                <MaterialIcons name='forward-10' color='#DB202C' size={30} onPress={() => { videoRef.current.seek(currentTime + 10) }} />
+                                            </>}
+                                    </Animated.View>
+                                    <Animated.View
+                                        entering={FadeInDown.delay(10)}
+                                        exiting={FadeOutDown.delay(10)}
+                                        style={tw`flex-row items-center justify-between w-full px-4 ${fullscreen ? '-bottom-45' : '-bottom-20'}`}>
+                                        <TouchableOpacity
+                                            style={tw`bg-red-500 w-20 justify-center items-center py-2 rounded-full`}
+                                            onPress={() => { videoRef.current.seek(currentTime + 85) }}
+                                        >
+                                            <Text style={tw`text-white font-semibold`}>+85s</Text>
+                                        </TouchableOpacity>
+                                        <MaterialIcons name={fullscreen ? 'fullscreen-exit' : 'fullscreen'} color='#DB202C' size={30} onPress={handleToggleFullscreen} />
+                                    </Animated.View>
+                                </View>
                             </View>
+                            <Animated.View
+                                entering={FadeInDown.delay(10)}
+                                exiting={FadeOutDown.delay(10)}
+                                style={tw`flex-row items-center justify-center ${fullscreen ? 'top-95' : 'top-70'}`}>
+                                <Text style={tw`text-white font-semibold`}>{currentTimeToDisplay}</Text>
+                                <Slider
+                                    style={tw`h-10 ${fullscreen ? 'w-160 -mx-2' : 'w-80'}`}
+                                    minimumValue={0}
+                                    maximumValue={100}
+                                    value={progress}
+                                    minimumTrackTintColor="#DB202C"
+                                    maximumTrackTintColor="#fff"
+                                    thumbTintColor="#DB202C"
+                                    tapToSeek={true}
+                                    onValueChange={(value) => {
+                                        setProgress(value);
+                                    }}
+                                    onSlidingComplete={(value) => {
+                                        if (videoRef.current) {
+                                            videoRef.current.seek((value / 100) * seekableDuration);
+                                        }
+                                    }}
+                                />
+                                <Text style={tw`text-white font-semibold`}>{durationToDisplay}</Text>
+
+                            </Animated.View>
                         </View>
                     )}
                 </View>

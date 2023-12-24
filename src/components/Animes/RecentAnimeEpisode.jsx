@@ -15,6 +15,7 @@ function RecentAnimeEpisode({ navigation }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
   const [isLoaded, setIsLoaded] = useState(true);
+  const [error, setError] = useState('');
   const url = `${Config.API_BASE_URL}/anime/gogoanime/recent-episodes`;
 
   // Function to fetch data from the API
@@ -28,6 +29,7 @@ function RecentAnimeEpisode({ navigation }) {
       setHasNextPage(data.hasNextPage);
       setIsLoaded(false);
     } catch (err) {
+      setError(err.message);
       console.error('Error fetching data:', err);
     }
   };
@@ -62,7 +64,7 @@ function RecentAnimeEpisode({ navigation }) {
   return (
     <SafeAreaView style={tw`bg-black flex-1`}>
       <View style={tw`bg-black flex-1`}>
-        <PageNavigation currentPage={currentPage} handlePrevPage={handlePrevPage} handleNextPage={handleNextPage} />
+        <PageNavigation currentPage={currentPage} handlePrevPage={handlePrevPage} handleNextPage={handleNextPage} isLoaded={isLoaded} error={error}/>
         {/* FlatList to render the items */}
         {!isLoaded ? (
           <FlatList

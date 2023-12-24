@@ -1,7 +1,8 @@
 // Import required libraries
-import React, { useEffect,useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer, getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
@@ -11,7 +12,6 @@ import { Provider } from 'react-redux';
 import { PaperProvider } from 'react-native-paper';
 import store from './components/redux/Store';
 import SplashScreen from 'react-native-splash-screen';
-// import NetInfo, { addEventListener } from "@react-native-community/netinfo";
 
 // Import screen components
 import News from './components/News/News';
@@ -21,34 +21,33 @@ import Manga from './components/Manga/Manga';
 import tw from 'twrnc';
 import Favorites from './components/Favorites/Favorites';
 import { bottomTabScreenOptions } from './components/constants/navigation.constants';
+import Toast from 'react-native-toast-message';
+import { toastConfig } from './components/ToastMessage';
 
 // Create Bottom Tab Navigator
 const Tab = createBottomTabNavigator();
-// const [isConnected, setIsConnected] = useState(null);
+const Stack = createNativeStackNavigator();
+const getRouteName = (route) => {
+  const routeName = getFocusedRouteNameFromRoute(route)
+  if (routeName === 'AnimeEpisodeStreamingLinks' || routeName === 'FlixHQStreamingLinks' || routeName === 'DramacoolStreamingLinks') {
+    return 'none'
+  }
+  else {
+    return 'flex'
+  }
+}
 // Main App Component
 const App = () => {
-  useEffect(() => {
+    useEffect(() => {
     // Hide the splash screen once your app is ready
     SplashScreen.hide();
-
   }, []);
-
-  const getRouteName = (route) => {
-    const routeName = getFocusedRouteNameFromRoute(route)
-    if (routeName === 'AnimeEpisodeStreamingLinks' || routeName === 'FlixHQStreamingLinks' || routeName === 'DramacoolStreamingLinks') {
-      return 'none'
-    }
-    else {
-      return 'flex'
-    }
-  }
 
   return (
     <Provider store={store}>
       <PaperProvider>
         <SafeAreaView style={tw`bg-black flex-1`}>
           <NavigationContainer>
-            {/* Bottom Tab Navigator */}
             <Tab.Navigator
               screenOptions={bottomTabScreenOptions}
             >
@@ -122,10 +121,13 @@ const App = () => {
               />
             </Tab.Navigator>
           </NavigationContainer>
+          <Toast config={toastConfig}/>
         </SafeAreaView>
       </PaperProvider>
     </Provider>
   );
 };
+
+
 
 export default App;

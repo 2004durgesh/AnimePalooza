@@ -49,14 +49,14 @@ const GenresAndEpisodes = ({ genres, episodes, title }) => {
         <View >
           <Text style={tw`text-white text-xl p-2 pt-4 font-semibold`}>{episodes.length} Episodes</Text>
           {episodes.map((ele, index) => (
-            <Animated.View entering={FadeInLeft.delay(200 * index)} exiting={FadeOutRight.delay(200 * index)} key={index} style={tw`border-b border-gray-800 p-2 py-3 my-1 h-16`}>
+            <Animated.View entering={FadeInLeft.delay(200 * index)} exiting={FadeOutRight.delay(200 * index)} key={ele.id} style={tw`border-b border-gray-800 p-2 py-3 my-1 h-16`}>
               <TouchableOpacity onPress={() => navigation.navigate('AnimeEpisodeStreamingLinks', {
                 episodeId: ele.id,
                 episodeNumber: ele.number,
                 title
               })}>
                 <Text style={tw`text-white text-lg`}>Episode {ele.number}</Text>
-                {parsedWatchedData.map((watchedEle) => (
+                {/* {parsedWatchedData.map((watchedEle) => (
                   (watchedEle.episodeId === ele.id ?
                     <>
                       <Text style={tw`text-gray-500 text-lg bottom-8.1`}>Episode {ele.number}</Text>
@@ -64,7 +64,7 @@ const GenresAndEpisodes = ({ genres, episodes, title }) => {
                     </> :
                     null
                   )
-                ))}
+                ))} */}
               </TouchableOpacity>
             </Animated.View>
           ))}
