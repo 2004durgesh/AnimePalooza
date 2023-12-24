@@ -1,6 +1,6 @@
-# Project Title
+# AnimePalooza
 
-A multi-category entertainment app for streaming anime, manga, dramas, news, and more!
+A multi-category entertainment Android app for streaming anime, manga, dramas, news, and more!
 
 ## Features
 
@@ -14,46 +14,50 @@ A multi-category entertainment app for streaming anime, manga, dramas, news, and
   - Read manga details and recommendations.
   - Stream manga chapters effortlessly.
 
-- **Dramacool Section**
+- **Dramacool (Movies Section)**
   - Access a vast collection of Asian dramas and movies.
   - Get information, watch streaming links, and explore recommendations.
 
-- **FlixHQ Section**
+- **FlixHQ (Movies Section)**
   - Stream global entertainment content.
   - Explore trending, latest, and search for content.
 
 - **News Section**
   - Stay updated with the latest news articles.
 
-## Screenshots
+<h2>Screenshots</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px;">
+  <div>
+    <h3>Anime Section</h3>
+    <img src="./readme-assets/anime.png" alt="Anime Section" height="500">
+  </div>
 
-<!-- Add screenshots or images for each section of your app -->
+  <div>
+    <h3>Manga Section</h3>
+    <img src="./readme-assets/manga.png" alt="Manga Section" height="500">
+  </div>
 
-### Anime Section
+  <div>
+    <h3>Movies Section</h3>
+    <img src="./readme-assets/movies.png" alt="Movies Section" height="500">
+  </div>
 
-![Anime Section](path/to/anime_screenshot.png)
+  <div>
+    <h3>Favorites Section</h3>
+    <img src="./readme-assets/favorites.png" alt="Favorites Section" height="500">
+  </div>
 
-### Manga Section
+  <div>
+    <h3>News Section</h3>
+    <img src="./readme-assets/news.png" alt="News Section" height="500">
+  </div>
+  
+  <div>
+  <h3>DEMO</h3>
+<video src="./readme-assets/demo.mp4" height="500" autoPlay muted></video>
+</div>
 
-![Manga Section](path/to/manga_screenshot.png)
-
-### Dramacool Section
-
-![Dramacool Section](path/to/dramacool_screenshot.png)
-
-### FlixHQ Section
-
-![FlixHQ Section](path/to/flixhq_screenshot.png)
-
-### News Section
-
-![News Section](path/to/news_screenshot.png)
-
-## Demo
-
-<!-- Add GIFs or video links to showcase the app in action -->
-
-![Demo GIF](path/to/demo.gif)
+</div>
 
 ## Technologies Used
 
@@ -61,12 +65,13 @@ A multi-category entertainment app for streaming anime, manga, dramas, news, and
 - React Navigation
 - Axios
 - Expo
+- Consumed API
 
 ## Download the App
 
 You can download the latest version of our app from the following link:
 
-[Download App APK](./readme-assets/app-debug.apk)
+[Download App APK](https://animepalooza.netlify.app/)
 
 ### Installation Instructions:
 
