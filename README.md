@@ -66,7 +66,7 @@ A multi-category entertainment app for streaming anime, manga, dramas, news, and
 
 You can download the latest version of our app from the following link:
 
-[Download App APK](/android/app/build/outputs/apk/debug/app-debug.apk)
+[Download App APK](./android/app/build/outputs/apk/debug/app-debug.apk)
 
 ### Installation Instructions:
 
