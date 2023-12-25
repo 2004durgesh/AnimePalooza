@@ -54,7 +54,7 @@ A multi-category entertainment Android app for streaming anime, manga, dramas, n
   
   <div>
   <h3>DEMO</h3>
-<video src="./readme-assets/demo.mp4" height="500" autoPlay muted></video>
+<img src="./readme-assets/demo.gif" alt="Demo gif" height="500" >
 </div>
 
 </div>
