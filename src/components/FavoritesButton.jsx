@@ -28,6 +28,7 @@ const FavoritesButton = ({ type, id, title, image, provider }) => {
             const storedData = await AsyncStorage.getItem('favoriteShows');
             if (storedData) {
                 const parsedData = JSON.parse(storedData);
+                console.log(parsedData)
                 setFavoriteShows(parsedData);
             }
         };
