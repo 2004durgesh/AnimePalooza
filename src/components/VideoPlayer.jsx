@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, TouchableOpacity, ActivityIndicator, ToastAndroid, StatusBar, Linking, ScrollView, TouchableWithoutFeedback } from 'react-native';
+import { TextTrackType } from 'react-native-video';
 import Video from 'react-native-video';
+import Subtitles from 'react-native-subtitles'
 import Orientation from 'react-native-orientation-locker';
 import Config from "./constants/env.config";
 import axios from 'axios';
@@ -24,11 +26,15 @@ const VideoPlayer = ({ route, type, provider, server }) => {
     const [progress, setProgress] = useState(0);
     const [paused, setPaused] = useState(false);
     const [fullscreen, setFullscreen] = useState(false);
-    const [visible, setVisible] = useState(false);
+    const [settingsVisible, setSettingsVisible] = useState(false);
+    const [captionsVisible, setCaptionsVisible] = useState(false);
     const [expanded, setExpanded] = useState(true);
     const [downloadLinks, setDownloadLinks] = useState('');
-    const [selectedIndex, setSeletedIndex] = useState(0);
+    const [qualitySelectedIndex, setQualitySeletedIndex] = useState(0);
+    const [captionsSelectedIndex, setCaptionsSeletedIndex] = useState(0);
     const [streamingSource, setStreamingSource] = useState('');
+    const [subtitles, setSubtitles] = useState([]);
+    const [subtitlesUrl, setSubtitlesUrl] = useState('');
     const [streamingLinks, setStreamingLinks] = useState([]);
     const [streamingQuality, setStreamingQuality] = useState('');
     const [selectedServer, setSelectedServer] = useState("");
@@ -60,12 +66,13 @@ const VideoPlayer = ({ route, type, provider, server }) => {
                 const { data } = await axios.get(url, {
                     headers: { 'x-api-key': Config.API_KEY }
                 });
-                console.log(data, url)
+                console.log(data)
                 setStreamingLinks(data.sources);
                 setDownloadLinks(data.download);
+                setSubtitles(data.subtitles);
                 const initialQuality = data.sources[3].quality; // Access quality from data
                 setStreamingQuality(initialQuality); // Set the initial quality
-                setSeletedIndex(3); // Set the initial index
+                setQualitySeletedIndex(3); // Set the initial index
                 if (provider === "gogoanime") { setStreamingSource(data.sources[3].url); }
                 if (provider === "dramacool") { setStreamingSource(data.sources[1].url); }
                 if (provider === "flixhq") { setStreamingSource(data.sources[0].url); }
@@ -78,10 +85,15 @@ const VideoPlayer = ({ route, type, provider, server }) => {
             }
         };
         fetchData();
+        console.log("sub", subtitles, subtitlesUrl)
     }, [episodeId, selectedServer]);
-    // Function to toggle the overlay
-    const toggleOverlay = () => {
-        setVisible(!visible);
+
+    const toggleSettingsOverlay = () => {
+        setSettingsVisible(!settingsVisible);
+    };
+
+    const toggleCaptionsOverlay = () => {
+        setCaptionsVisible(!captionsVisible);
     };
     // Toggle visibility of controls
     const toggleControls = () => {
@@ -252,8 +264,8 @@ const VideoPlayer = ({ route, type, provider, server }) => {
         <View style={tw``}>
             <StatusBar backgroundColor='black' />
             <Overlay
-                isVisible={visible}
-                onBackdropPress={toggleOverlay}
+                isVisible={settingsVisible}
+                onBackdropPress={toggleSettingsOverlay}
                 style={tw`justify-center items-center`}
             >
                 <ScrollView style={tw`p-2 w-84 max-h-96`}>
@@ -264,13 +276,13 @@ const VideoPlayer = ({ route, type, provider, server }) => {
                                     onPress={() => {
                                         setStreamingSource(source.url);
                                         setStreamingQuality(source.quality);
-                                        setSeletedIndex(index);
+                                        setQualitySeletedIndex(index);
                                     }}
                                     style={tw`p-2 flex-row justify-between items-center`}
                                 >
                                     <Text style={tw`text-[#DB202C]`}>Quality: {source.quality}</Text>
                                     <CheckBox
-                                        checked={selectedIndex === index}
+                                        checked={qualitySelectedIndex === index}
                                         checkedIcon="dot-circle-o"
                                         uncheckedIcon="circle-o"
                                         center={true}
@@ -279,7 +291,7 @@ const VideoPlayer = ({ route, type, provider, server }) => {
                                         onPress={() => {
                                             setStreamingSource(source.url);
                                             setStreamingQuality(source.quality);
-                                            setSeletedIndex(index);
+                                            setQualitySeletedIndex(index);
                                         }} />
                                 </TouchableOpacity>
                             </View>
@@ -308,6 +320,39 @@ const VideoPlayer = ({ route, type, provider, server }) => {
                     </ListItem.Accordion>
                 </ScrollView>
             </Overlay>
+            <Overlay
+                isVisible={captionsVisible}
+                onBackdropPress={toggleCaptionsOverlay}
+                style={tw`justify-center items-center`}
+            >
+                <ScrollView style={tw`p-2 w-84 max-h-96`}>
+                    <View>
+                        {subtitles.map((source, index) => (
+                            <View key={index}>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        setSubtitlesUrl(source.url)
+                                    }}
+                                    style={tw`p-2 flex-row justify-between items-center`}
+                                >
+                                    <Text style={tw`text-[#DB202C]`}>Language: {source.lang}</Text>
+                                    <CheckBox
+                                        checked={captionsSelectedIndex === index}
+                                        checkedIcon="dot-circle-o"
+                                        uncheckedIcon="circle-o"
+                                        center={true}
+                                        containerStyle={tw`-p-1`}
+                                        checkedColor="#DB202C"
+                                        onPress={() => {
+                                            setCaptionsSeletedIndex(index);
+                                            setSubtitlesUrl(source.url)
+                                        }} />
+                                </TouchableOpacity>
+                            </View>
+                        ))}
+                    </View>
+                </ScrollView>
+            </Overlay>
             <TouchableOpacity
                 onPress={toggleControls}
                 delayPressIn={100}
@@ -329,6 +374,14 @@ const VideoPlayer = ({ route, type, provider, server }) => {
                         progressUpdateInterval={1000}
                         resizeMode="contain"
                     />
+                    <Subtitles
+                        currentTime={currentTime}
+                        selectedsubtitle={{
+                            file: subtitlesUrl,
+                        }}
+                        containerStyle={tw`absolute ${fullscreen ? 'bottom-20' : 'bottom-30'} z-20 w-full`}
+                        textStyle={{ fontSize: 15, padding: 5, backgroundColor: null }}
+                    />
                     {controlsVisible && (
                         <View>
                             <View style={tw`bg-transparent absolute top-0 left-0 right-0 bottom-0 h-65 z-50`}>
@@ -343,7 +396,8 @@ const VideoPlayer = ({ route, type, provider, server }) => {
                                         </View>
                                         <View style={tw`flex-row items-center gap-4 ml-auto`}>
                                             {downloadLinks ? <Ionicons name='download-outline' color='#DB202C' size={30} style={tw``} onPress={handleOpenLink} /> : null}
-                                            <Ionicons name='settings-outline' color='#DB202C' size={30} style={tw``} onPress={toggleOverlay} />
+                                            {subtitles && subtitles.length > 0 ? <MaterialIcons name='closed-caption-off' color='#DB202C' size={30} style={tw``} onPress={toggleCaptionsOverlay} /> : null}
+                                            <Ionicons name='settings-outline' color='#DB202C' size={30} style={tw``} onPress={toggleSettingsOverlay} />
                                         </View>
                                     </Animated.View>
                                     <Animated.View entering={FadeIn.delay(10)} exiting={FadeOut.delay(10)} style={tw`flex-row justify-evenly items-center w-50 top-20`}>
