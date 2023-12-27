@@ -10,12 +10,15 @@ import {
   Keyboard,
 } from 'react-native';
 import tw from 'twrnc';
+import _ from 'lodash';
 import Config from "../constants/env.config";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import Feather from 'react-native-vector-icons/Feather';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import PageNavigation from '../PageNavigation';
 
 const MangaSearch = ({ route, navigation }) => {
@@ -26,37 +29,52 @@ const MangaSearch = ({ route, navigation }) => {
   const [text, onChangeText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [searchResults, setSearchResults] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(true);
+  const [currentQuery, setCurrentQuery] = useState('');
+  const [favorites, setFavorites] = useState([]);
 
   // API URL
   const url = `${Config.API_BASE_URL}/manga/${provider}/${text}`;
 
   // Function to fetch search results from the API
   const fetchData = async (page) => {
-    setIsLoading(true);
     try {
-      const { data } = await axios.get(url, { 
-        params: { page },
-        headers:{'x-api-key': Config.API_KEY} });
-      setSearchResults(data.results);
-      setCurrentPage(page);
-      setHasNextPage(data.hasNextPage);
+      if (text === currentQuery) {
+        const { data } = await axios.get(url, {
+          params: { page: page },
+          headers: { 'x-api-key': Config.API_KEY }
+        });
+        setSearchResults(data.results);
+        setCurrentPage(page);
+        console.log('fetchData function called')
+      }
     } catch (err) {
+      setIsLoaded(false);
       throw new Error(err.message);
     } finally {
-      setIsLoading(false);
+      setIsLoaded(false);
     }
   };
-
+  const debouncedFetch = _.debounce(fetchData, 2000);
+  useEffect(() => {
+    AsyncStorage.getItem('favoriteShows').then((data) => {
+      if (data) {
+        const parsedData = JSON.parse(data);
+        setFavorites(parsedData);
+      }
+    }
+    );
+  }, []);
   useEffect(() => {
     // Fetch data whenever the search text changes
     if (text !== '') {
-      fetchData(currentPage);
+      setCurrentQuery(text);
+      debouncedFetch(currentPage);
     } else {
       // Clear the search results when the search text is empty
       setSearchResults([]);
     }
-  }, [text]);
+  }, [text, currentPage]);
 
   // Function to handle navigation to the next page
   const handleNextPage = () => {
@@ -78,8 +96,11 @@ const MangaSearch = ({ route, navigation }) => {
     Keyboard.dismiss();
     // Fetch data for the first page
     setCurrentPage(1);
+    console.log('handleSearch function called')
+
     fetchData(1);
   };
+  const debouncedSearch = _.debounce(handleSearch, 1000);
 
   // Render each manga item
   const renderItem = ({ item }) => {
@@ -95,6 +116,13 @@ const MangaSearch = ({ route, navigation }) => {
           <Text style={tw`text-white font-bold mb-2 text-center`} numberOfLines={1}>
             {item.title}
           </Text>
+          {favorites
+                .filter((favItem) => favItem.id === item.id)
+                .map((favItem) => (
+                  <View key={favItem.id} style={tw`absolute top-2 left-2`}>
+                    <MaterialIcons name="favorite" size={20} color="#DB202C" style={tw``} />
+                  </View>
+                ))}
           <View style={tw`flex-row items-center gap-1`}>
             {item.status === 'completed' ? (
               <Ionicons name="checkmark-done" size={15} color="#D3D3D3" />
@@ -141,19 +169,23 @@ const MangaSearch = ({ route, navigation }) => {
         <View style={tw`p-4 mt-4 mx-2 w-full mx-auto`}>
           {/* Search Input */}
           <TextInput
-            style={tw`h-16 p-2 py-4 border-b-2 border-gray-300 text-white`}
-            onChangeText={onChangeText}
+            onChangeText={(text) => {
+              onChangeText(text);
+              // debouncedSearch();
+            }}
             placeholder='Search...'
+            inputMode='search'
             value={text}
             placeholderTextColor='#A0AEC0'
-            onSubmitEditing={handleSearch}
+            onSubmitEditing={() => debouncedSearch()}
+            style={tw`bg-black h-16 m-2 border-2 border-gray-300 text-white rounded-lg px-4 text-lg`}
           />
           {text !== '' && (
             <Text style={tw`mt-2 text-gray-800 text-lg text-white`}>You searched for: {text.trim()}</Text>
           )}
           <PageNavigation currentPage={currentPage} handlePrevPage={handlePrevPage} handleNextPage={handleNextPage} />
           {/* Activity Loader or FlatList */}
-          {isLoading ? (
+          {isLoaded ? (
             <ActivityIndicator size="large" color="#DB202C" />
           ) : (
             <FlatList

@@ -12,7 +12,7 @@ import { topTabScreenOptions } from '../constants/navigation.constants.js';
 
 // Create Material Top Tab Navigator
 const Tab = createMaterialTopTabNavigator();
-const Favorites = () => {
+const Favorites = ({route}) => {
     return (
         <SafeAreaView style={tw`bg-black flex-1`}>
             <Tab.Navigator

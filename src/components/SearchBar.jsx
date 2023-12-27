@@ -39,6 +39,7 @@ const SearchBar = ({ type, provider }) => {
     }
     catch (err) {
       setError(err.message);
+      setIsLoaded(false);
       throw new Error(err.message);
     } finally {
       setIsLoaded(false);
@@ -111,6 +112,7 @@ const SearchBar = ({ type, provider }) => {
         {/* Search Input */}
         <TextInput
           placeholder="Search"
+          placeholderTextColor='#A0AEC0'
           inputMode='search'
           onChangeText={(text) => {
             onChangeText(text);

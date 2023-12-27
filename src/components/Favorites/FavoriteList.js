@@ -3,12 +3,14 @@ import { View, Text, FlatList, RefreshControl } from 'react-native';
 import tw from 'twrnc';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
+import {useRoute} from '@react-navigation/native';
 import RenderItemCards from '../RenderItemCards';
 import ActivityLoader from '../ActivityLoader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const FavoriteList = ({ navigation, favoriteType }) => {
   // const favoriteShows = useSelector((state) => state.favorites.favoriteShows);
+  const route=useRoute()
   const [favorites, setFavorites] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const state = useSelector((state) => state);
@@ -35,7 +37,7 @@ const FavoriteList = ({ navigation, favoriteType }) => {
     setComponentRemountKey((prevKey) => prevKey + 1);
   }, [state.favoriteShows.favoriteShows]);
 
-  console.log('Favorites:', favoriteType,favorites);
+  // console.log('Favorites:', favoriteType,favorites);
  
     const handleItemPress = (url, id) => {
     let screenName = '';
@@ -68,7 +70,7 @@ const FavoriteList = ({ navigation, favoriteType }) => {
       data={favorites.filter((favorite) => favorite.type === favoriteType)}
       keyExtractor={(item) => item.id}
       renderItem={({ item,index }) => (
-        <RenderItemCards item={item} index={index} handleItemPress={handleItemPress} />
+        <RenderItemCards item={item} index={index} handleItemPress={handleItemPress} route={route}/>
       )}
       numColumns={3}
       contentContainerStyle={tw`pb-28`}
