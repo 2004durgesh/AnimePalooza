@@ -327,7 +327,7 @@ const VideoPlayer = ({ route, type, provider, server }) => {
             >
                 <ScrollView style={tw`p-2 w-84 max-h-96`}>
                     <View>
-                        {subtitles.map((source, index) => (
+                        {subtitles&&subtitles.map((source, index) => (
                             <View key={index}>
                                 <TouchableOpacity
                                     onPress={() => {
