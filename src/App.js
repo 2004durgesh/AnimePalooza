@@ -121,7 +121,7 @@ const App = () => {
               />
             </Tab.Navigator>
           </NavigationContainer>
-          <Toast config={toastConfig}/>
+          {/* <Toast config={toastConfig}/> */}
         </SafeAreaView>
       </PaperProvider>
     </Provider>

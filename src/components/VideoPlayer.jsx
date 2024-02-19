@@ -76,7 +76,6 @@ const VideoPlayer = ({ route, type, provider, server }) => {
                 if (provider === "gogoanime") { setStreamingSource(data.sources[3].url); }
                 if (provider === "dramacool") { setStreamingSource(data.sources[1].url); }
                 if (provider === "flixhq") { setStreamingSource(data.sources[0].url); }
-                setIsLoading(false)
                 return data;
             } catch (err) {
                 throw new Error(err.message);
@@ -246,11 +245,11 @@ const VideoPlayer = ({ route, type, provider, server }) => {
         }
     };
 
-    // Function to render a loading indicator
-    const renderLoadingIndicator = () => (
-        <ActivityIndicator size="large" color="#DB202C" />
-    );
-
+    // Function to handle buffering
+    const handleOnBuffer = ({ isBuffering }) => {
+        console.log('Buffering status changed. Is buffering:', isBuffering);
+        setIsLoading(isBuffering)
+    };
     // Function to show a Toast notification with gravity
     const showToastWithGravity = () => {
         ToastAndroid.showWithGravity(
@@ -327,7 +326,7 @@ const VideoPlayer = ({ route, type, provider, server }) => {
             >
                 <ScrollView style={tw`p-2 w-84 max-h-96`}>
                     <View>
-                        {subtitles&&subtitles.map((source, index) => (
+                        {subtitles && subtitles.map((source, index) => (
                             <View key={index}>
                                 <TouchableOpacity
                                     onPress={() => {
@@ -365,14 +364,15 @@ const VideoPlayer = ({ route, type, provider, server }) => {
                         style={tw`absolute top-0 left-0 right-0 bottom-0 z-10`}
                         paused={paused}
                         ref={videoRef}
-                        onLoad={renderLoadingIndicator}
-                        onLoadStart={renderLoadingIndicator}
+                        onLoad={() => setIsLoading(false)}
+                        onLoadStart={() => setIsLoading(true)}
                         onError={showToastWithGravity}
                         onFullscreenPlayerDidPresent={handlePresentFullscreen}
                         onFullscreenPlayerDidDismiss={handleDismissFullscreen}
                         onProgress={handleOnProgress}
                         progressUpdateInterval={1000}
                         resizeMode="contain"
+                        onBuffer={handleOnBuffer}
                     />
                     <Subtitles
                         currentTime={currentTime}
@@ -384,7 +384,7 @@ const VideoPlayer = ({ route, type, provider, server }) => {
                     />
                     {controlsVisible && (
                         <View>
-                            <View style={tw`bg-transparent absolute top-0 left-0 right-0 bottom-0 h-65 z-50`}>
+                            <View style={tw`bg-black bg-opacity-25 absolute top-0 left-0 right-0 bottom-0 h-100 z-50`}>
                                 <View style={tw`justify-center items-center h-70`}>
                                     <Animated.View
                                         entering={FadeInUp.delay(10)}
@@ -392,7 +392,7 @@ const VideoPlayer = ({ route, type, provider, server }) => {
                                         style={tw`flex-row justify-between px-4 items-center ${fullscreen ? 'w-180' : 'w-full'} -top-10`}>
                                         <View>
                                             <Text style={tw`text-white font-bold w-80 mr-auto`} numberOfLines={1}>{title}</Text>
-                                            {episodeNumber ? <Text style={tw`text-gray-500 mr-auto`} numberOfLines={1}>Episode Number: {episodeNumber}</Text> : null}
+                                            {episodeNumber ? <Text style={tw`text-gray-500 text-xs mr-auto`} numberOfLines={1}>Episode Number: {episodeNumber}</Text> : null}
                                         </View>
                                         <View style={tw`flex-row items-center gap-4 ml-auto`}>
                                             {downloadLinks ? <Ionicons name='download-outline' color='#DB202C' size={30} style={tw``} onPress={handleOpenLink} /> : null}
@@ -427,9 +427,9 @@ const VideoPlayer = ({ route, type, provider, server }) => {
                                 entering={FadeInDown.delay(10)}
                                 exiting={FadeOutDown.delay(10)}
                                 style={tw`flex-row items-center justify-center ${fullscreen ? 'top-95' : 'top-70'}`}>
-                                <Text style={tw`text-white font-semibold`}>{currentTimeToDisplay}</Text>
+                                <Text style={tw`text-white text-xs font-semibold`}>{currentTimeToDisplay}</Text>
                                 <Slider
-                                    style={tw`h-10 ${fullscreen ? 'w-160 -mx-2' : 'w-80'}`}
+                                    style={tw`h-10 ${fullscreen ? 'w-180 -mx-2' : 'w-80'}`}
                                     minimumValue={0}
                                     maximumValue={100}
                                     value={progress}
@@ -439,14 +439,16 @@ const VideoPlayer = ({ route, type, provider, server }) => {
                                     tapToSeek={true}
                                     onValueChange={(value) => {
                                         setProgress(value);
+                                        const newCurrentTime = (value / 100) * seekableDuration;
+                                        setCurrentTimeToDisplay(formatDuration(moment.duration(newCurrentTime, 'seconds')));
                                     }}
-                                    onSlidingComplete={(value) => {
-                                        if (videoRef.current) {
-                                            videoRef.current.seek((value / 100) * seekableDuration);
-                                        }
-                                    }}
+                                onSlidingComplete={(value) => {
+                                    if (videoRef.current) {
+                                        videoRef.current.seek((value / 100) * seekableDuration);
+                                    }
+                                }}
                                 />
-                                <Text style={tw`text-white font-semibold`}>{durationToDisplay}</Text>
+                                <Text style={tw`text-white text-xs font-semibold`}>{durationToDisplay}</Text>
 
                             </Animated.View>
                         </View>
