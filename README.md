@@ -71,7 +71,7 @@ A multi-category entertainment Android app for streaming anime, manga, dramas, n
 
 You can download the latest version of our app from the following link:
 
-[Download App APK](https://animepalooza.netlify.app/)
+[Download App APK](https://github.com/2004durgesh/AnimePalooza-Immerse-in-the-Anime-Wonderland-/releases/latest)
 
 ### Installation Instructions:
 
