@@ -34,7 +34,7 @@ A multi-category entertainment Android app for streaming anime, manga, dramas, n
 
   <div>
     <h3>Manga Section</h3>
-    <img src="./readme-assets/manga.png" alt="Manga Section" height="500">
+    <img src="./readme-assets/manga.jpg" alt="Manga Section" height="500">
   </div>
 
   <div>
