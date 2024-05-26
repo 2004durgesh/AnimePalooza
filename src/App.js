@@ -21,8 +21,7 @@ import Manga from './components/Manga/Manga';
 import tw from 'twrnc';
 import Favorites from './components/Favorites/Favorites';
 import { bottomTabScreenOptions } from './components/constants/navigation.constants';
-import Toast from 'react-native-toast-message';
-import { toastConfig } from './components/ToastMessage';
+
 
 // Create Bottom Tab Navigator
 const Tab = createBottomTabNavigator();
@@ -121,7 +120,6 @@ const App = () => {
               />
             </Tab.Navigator>
           </NavigationContainer>
-          {/* <Toast config={toastConfig}/> */}
         </SafeAreaView>
       </PaperProvider>
     </Provider>

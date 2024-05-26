@@ -2,14 +2,12 @@ import { View, Text, TouchableOpacity } from 'react-native'
 import React from 'react'
 import tw from 'twrnc'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import { ToastMessage } from './ToastMessage';
 
 
 const PageNavigation = ({ currentPage, handlePrevPage, handleNextPage, isLoaded, error }) => {
     return (
 
         <>
-            {/* <ToastMessage type="error" text1="Error fetching data" text2={error}/> */}
             <View style={tw`flex flex-row justify-between items-center mx-4 my-4`}>
                 <TouchableOpacity onPress={handlePrevPage} style={tw`bg-white pr-1 rounded-full w-12 h-12 justify-center items-center`}>
                     <FontAwesome name="chevron-left" size={30} color="#DB202C" />
@@ -19,7 +17,6 @@ const PageNavigation = ({ currentPage, handlePrevPage, handleNextPage, isLoaded,
                     <FontAwesome name="chevron-right" size={30} color="#DB202C" />
                 </TouchableOpacity>
             </View>
-            {/*  */}
         </>
 
     )
