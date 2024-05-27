@@ -2,6 +2,7 @@ import React from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import  MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import  Ionicons  from 'react-native-vector-icons/Ionicons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import TopAiringAnime from './TopAiringAnime';
@@ -57,12 +58,12 @@ const TopTabs = () => {
         }}
       />
       <Tab.Screen
-        name="Latest"
+        name="Popular"
         component={RecentAnimeEpisode}
         options={{
           tabBarIcon: ({ focused }) => (
-            <MaterialIcons
-              name="fiber-new"
+            <Ionicons
+              name="heart"
               size={25}
               color={focused ? 'white' : 'gray'}
             />

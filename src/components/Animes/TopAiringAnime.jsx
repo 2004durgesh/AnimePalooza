@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, ImageBackground, ActivityIndicator, Dimensions } from 'react-native';
+import { View, FlatList } from 'react-native';
 import axios from 'axios';
 import Config from "../constants/env.config";
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -13,40 +13,52 @@ const TopAiringAnime = ({ navigation }) => {
   const [results, setResults] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(true);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState('');
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const url = `${Config.API_BASE_URL}/anime/gogoanime/top-airing`;
+
   // Function to fetch data from the API
   const fetchData = async (page) => {
+    setIsLoadingMore(true);
     try {
-      const { data } = await axios.get(url, { 
-        params: { page, type: 1 } ,
-        headers:{'x-api-key': Config.API_KEY}
+      const { data } = await axios.get(url, {
+        params: { page, type: 1 },
+        headers: { 'x-api-key': Config.API_KEY }
       });
-      setResults(data.results);
-      setCurrentPage(page);
+      setResults(prevResults => [...prevResults, ...data.results]);
       setHasNextPage(data.hasNextPage);
-      setIsLoaded(false); // Show the activity loader
+      setIsLoaded(true);
+      console.log('Data:', data);
     } catch (err) {
       setError(err.message);
       console.error('Error fetching data:', err.message);
-    } 
+    } finally {
+      setIsLoadingMore(false);
+    }
   };
-  // Fetch data on component mount and whenever the currentPage changes
+
+  // Fetch initial data on component mount
   useEffect(() => {
     fetchData(currentPage);
-  }, [currentPage]);
+  }, []);
 
   // Function to handle navigation to the next page
   const handleNextPage = () => {
-    if (hasNextPage) {
-      fetchData(currentPage + 1);
+    if (hasNextPage && !isLoadingMore) {
+      const nextPage = currentPage + 1;
+      setCurrentPage(nextPage);
+      fetchData(nextPage);
     }
   };
+
   // Function to handle navigation to the previous page
   const handlePrevPage = () => {
-    if (currentPage > 1) {
-      fetchData(currentPage - 1);
+    if (currentPage > 1 && !isLoadingMore) {
+      const prevPage = currentPage - 1;
+      setCurrentPage(prevPage);
+      // Fetch the previous page data and reset the results array
+      fetchData(prevPage);
     }
   };
 
@@ -58,22 +70,39 @@ const TopAiringAnime = ({ navigation }) => {
     });
   };
 
-
   return (
     <SafeAreaView style={tw`bg-black flex-1`}>
-        <PageNavigation currentPage={currentPage} handlePrevPage={handlePrevPage} handleNextPage={handleNextPage} isLoaded={isLoaded} error={error}/>
-        {/* FlatList to render the items */}
-        {!isLoaded ? (
-          // If data is loaded, show the FlatList
-          <FlatList
-            data={results}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item,index }) => <RenderItemCards item={item} index={index} handleItemPress={handleItemPress}/>}
-            numColumns={3} // Use the numColumns prop to show 3 items in a row
-            contentContainerStyle={tw`pb-28`}
-            showsVerticalScrollIndicator={false}
-          />
-        ) : (<ActivityLoader/>)}
+      {/* <PageNavigation
+        currentPage={currentPage}
+        handlePrevPage={handlePrevPage}
+        handleNextPage={handleNextPage}
+        isLoaded={isLoaded}
+        error={error}
+      /> */}
+      {/* FlatList to render the items */}
+      {isLoaded ? (
+        <FlatList
+          data={results}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item, index }) => (
+            <RenderItemCards
+              item={item}
+              index={index}
+              handleItemPress={handleItemPress}
+            />
+          )}
+          numColumns={3} // Use the numColumns prop to show 3 items in a row
+          contentContainerStyle={tw`pb-28`}
+          showsVerticalScrollIndicator={false}
+          onEndReached={handleNextPage}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={() =>
+            isLoadingMore ? <ActivityLoader/> : null
+          }
+        />
+      ) : (
+        <ActivityLoader />
+      )}
     </SafeAreaView>
   );
 };

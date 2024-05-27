@@ -4,7 +4,6 @@ import axios from 'axios';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import tw from 'twrnc';
-import _ from 'lodash'; // Import Lodash
 import { Searchbar } from 'react-native-paper';
 import Config from "./constants/env.config";
 import PageNavigation from './PageNavigation';
@@ -19,19 +18,21 @@ const SearchBar = ({ type, provider }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [isLoaded, setIsLoaded] = useState(true);
   const [error, setError] = useState('');
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [currentQuery, setCurrentQuery] = useState('');
 
   const url = `${Config.API_BASE_URL}/${type}/${provider}/${text}`;
 
   // Function to fetch search results from the API
   async function fetchData(page) {
+    setIsLoadingMore(true);
     try {
       if (text === currentQuery) {
         const { data } = await axios.get(url, {
           params: { page: page },
           headers: { 'x-api-key': Config.API_KEY }
         });
-        setSearchResults(data.results);
+        setSearchResults(prevResults => [...prevResults, ...data.results]);
         setCurrentPage(page);
         setHasNextPage(data.hasNextPage);
         console.log('fetchData function called')
@@ -43,16 +44,15 @@ const SearchBar = ({ type, provider }) => {
       throw new Error(err.message);
     } finally {
       setIsLoaded(false);
+      setIsLoadingMore(false);
     }
   }
 
-  const debouncedFetch = _.debounce(fetchData, 2000);
 
   useEffect(() => {
     // Fetch data whenever the search text changes
     if (text !== '') {
       setCurrentQuery(text);
-      debouncedFetch(currentPage);
     } else {
       // Clear the search results when the search text is empty
       setSearchResults([]);
@@ -61,15 +61,20 @@ const SearchBar = ({ type, provider }) => {
 
   // Function to handle navigation to the next page
   const handleNextPage = () => {
-    if (hasNextPage) {
-      setCurrentPage(currentPage + 1);
+    if (hasNextPage && !isLoadingMore) {
+      const nextPage = currentPage + 1;
+      setCurrentPage(nextPage);
+      fetchData(nextPage);
     }
   };
 
   // Function to handle navigation to the previous page
   const handlePrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
+    if (currentPage > 1 && !isLoadingMore) {
+      const prevPage = currentPage - 1;
+      setCurrentPage(prevPage);
+      // Fetch the previous page data and reset the results array
+      fetchData(prevPage);
     }
   };
 
@@ -83,7 +88,6 @@ const SearchBar = ({ type, provider }) => {
     fetchData(1);
   };
 
-  const debouncedSearch = _.debounce(handleSearch, 1000);
 
   // Function to handle item press (can be further implemented)
   const handleItemPress = (url, id) => {
@@ -118,15 +122,13 @@ const SearchBar = ({ type, provider }) => {
             onChangeText(text);
             // debouncedSearch();
           }}
+          onSubmitEditing={handleSearch}
           value={text}
-          onSubmitEditing={() => debouncedSearch()}
           style={tw`bg-black h-16 m-2 border-2 border-gray-300 text-white rounded-lg px-4 text-lg`}
         />
         {text !== '' && (
           <Text style={tw`mt-2 text-gray-800 text-lg text-white`}>You searched for: {text.trim()}</Text>
         )}
-
-        {hasNextPage ? <PageNavigation currentPage={currentPage} handlePrevPage={handlePrevPage} handleNextPage={handleNextPage} isLoaded={isLoaded} error={error} /> : null}
         {/* Activity Loader or FlatList */}
         {isLoaded ? (
           <ActivityLoader style={tw`mt-20`} />
@@ -138,6 +140,11 @@ const SearchBar = ({ type, provider }) => {
             numColumns={3} // Use the numColumns prop to show 3 items in a row
             contentContainerStyle={tw`pb-96`}
             showsVerticalScrollIndicator={false}
+            onEndReached={handleNextPage}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={() =>
+              isLoadingMore ? <ActivityLoader /> : null
+            }
           />
         )}
       </View>
