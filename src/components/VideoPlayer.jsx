@@ -13,7 +13,6 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import tw from 'twrnc';
 import { Overlay, ListItem, CheckBox } from '@rneui/themed';
 import Animated, { FadeIn, FadeInDown, FadeInUp, FadeOut, FadeOutDown, FadeOutUp, } from 'react-native-reanimated';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import ActivityLoader from './ActivityLoader';
 
 const VideoPlayer = ({ route, type, provider, server }) => {
@@ -40,17 +39,9 @@ const VideoPlayer = ({ route, type, provider, server }) => {
     const [selectedServer, setSelectedServer] = useState("");
     const [isLoading, setIsLoading] = useState(true)
     const { episodeId, mediaId, episodeNumber, title } = route
-    const [watchTime, setWatchTime] = useState([])
-    const [isWatched, setIsWatched] = useState(false)
+    
 
-    const watchedInfo = {
-        episodeId,
-        mediaId: mediaId || null,
-        title,
-        type,
-        provider,
-        currentTime: currentTime,
-    };
+    
     // Fetch streaming links on component mount
     useEffect(() => {
         // API URL to fetch streaming links for the episode
@@ -149,7 +140,7 @@ const VideoPlayer = ({ route, type, provider, server }) => {
 
     useEffect(() => {
         let timer;
-        if (controlsVisible) {
+        if (controlsVisible && !isLoading) {
             timer = setTimeout(() => {
                 setControlsVisible(false);
             }, 5000);
@@ -157,28 +148,9 @@ const VideoPlayer = ({ route, type, provider, server }) => {
         return () => {
             clearTimeout(timer);
         };
-    }, [controlsVisible]);
+    }, [controlsVisible, isLoading]);
 
     useEffect(() => {
-        const fetchWatchTimeData = async () => {
-            try {
-                const storedData = await AsyncStorage.getItem('watched');
-                console.log('Stored Data:', storedData);
-                if (storedData) {
-                    const parsedData = JSON.parse(storedData);
-                    console.log('Parsed Data:', parsedData[parsedData.length - 1]);
-                    console.log((parsedData[parsedData.length - 1].currentTime))
-                    setWatchTime(parsedData);
-                    if (videoRef.current) {
-                        videoRef.current.seek((parsedData[parsedData.length - 1].currentTime));
-                    }
-                }
-            } catch (error) {
-                console.error('Error fetching watch time data:', error);
-            }
-        };
-
-        fetchWatchTimeData();
         return () => {
             // Clean up listeners when the component unmounts
             Orientation.lockToPortrait();
@@ -186,34 +158,6 @@ const VideoPlayer = ({ route, type, provider, server }) => {
             StatusBar.setTranslucent(false)
         };
     }, []);
-
-    useEffect(() => {
-        setIsWatched(watchTime.some(watched => watched.episodeId === episodeId));
-        console.log('isWatched', watchTime.some(watched => watched.episodeId === episodeId), episodeId)
-
-        const addToWatchTimeHandler = async () => {
-            try {
-                if (isWatched) {
-                    const newWatchTime = watchTime.filter(watched => watched.episodeId !== episodeId);
-                    console.log('Removing episode from watch time. New watch time:', newWatchTime, currentTime);
-                    await AsyncStorage.setItem('watched', JSON.stringify(newWatchTime));
-                    // setWatchTime(newWatchTime);
-                } else {
-                    watchTime.push(watchedInfo);
-                    // watchTime.shift();
-                    console.log('Adding episode to watch time. New watch time:', watchTime, currentTime);
-                    await AsyncStorage.setItem('watched', JSON.stringify(watchTime));
-                    // setWatchTime(watchTime);
-
-                }
-                console.log("watch time", watchTime)
-            } catch (error) {
-                console.error('Error updating watch time:', error);
-            }
-        };
-
-        addToWatchTimeHandler();
-    }, [episodeId, watchTime]);
 
     // Handle entering fullscreen
     const handlePresentFullscreen = () => {
@@ -360,7 +304,16 @@ const VideoPlayer = ({ route, type, provider, server }) => {
             >
                 <View style={tw`relative ${fullscreen ? 'h-full' : 'h-105'} w-full`}>
                     <Video
-                        source={{ uri: streamingSource }}
+                        source={{
+                            uri: streamingSource,
+                            metadata: {
+                                title: 'Custom Title',
+                                subtitle: 'Custom Subtitle',
+                                artist: 'Custom Artist',
+                                description: 'Custom Description',
+                                imageUri: 'https://pbs.twimg.com/profile_images/1498641868397191170/6qW2XkuI_400x400.png'
+                            }
+                        }}
                         style={tw`absolute top-0 left-0 right-0 bottom-0 z-10`}
                         paused={paused}
                         ref={videoRef}
@@ -373,6 +326,20 @@ const VideoPlayer = ({ route, type, provider, server }) => {
                         progressUpdateInterval={1000}
                         resizeMode="contain"
                         onBuffer={handleOnBuffer}
+                        showNotificationContorols={true}
+                        playInBackground={true}
+                        playWhenInactive={true}
+                        selectedTextTrack={{ type: 'language', value: 'en' }}
+                        // textTracks={[
+                        //     {
+                        //         title: 'test',
+                        //         language: 'en',
+                        //         type: TextTrackType.VTT,
+                        //         uri:
+                        //             'https://brenopolanski.github.io/html5-video-webvtt-example/MIB2-subtitles-pt-BR.vtt',
+                        //     },
+                        // ]}
+                        subtitleStyle={{ paddingBottom: 50, fontSize: 20, opacity: 1 }}
                     />
                     <Subtitles
                         currentTime={currentTime}
@@ -382,37 +349,39 @@ const VideoPlayer = ({ route, type, provider, server }) => {
                         containerStyle={tw`absolute ${fullscreen ? 'bottom-20' : 'bottom-30'} z-20 w-full`}
                         textStyle={{ fontSize: 15, padding: 5, backgroundColor: null }}
                     />
-                    {controlsVisible && (
-                        <View>
-                            <View style={tw`bg-black bg-opacity-25 absolute top-0 left-0 right-0 bottom-0 h-100 z-50`}>
-                                <View style={tw`justify-center items-center h-70`}>
-                                    <Animated.View
-                                        entering={FadeInUp.delay(10)}
-                                        exiting={FadeOutUp.delay(10)}
-                                        style={tw`flex-row justify-between px-4 items-center ${fullscreen ? 'w-180' : 'w-full'} -top-10`}>
-                                        <View>
-                                            <Text style={tw`text-white font-bold w-80 mr-auto`} numberOfLines={1}>{title}</Text>
-                                            {episodeNumber ? <Text style={tw`text-gray-500 text-xs mr-auto`} numberOfLines={1}>Episode Number: {episodeNumber}</Text> : null}
-                                        </View>
-                                        <View style={tw`flex-row items-center gap-4 ml-auto`}>
-                                            {downloadLinks ? <Ionicons name='download-outline' color='#DB202C' size={30} style={tw``} onPress={handleOpenLink} /> : null}
-                                            {subtitles && subtitles.length > 0 ? <MaterialIcons name='closed-caption-off' color='#DB202C' size={30} style={tw``} onPress={toggleCaptionsOverlay} /> : null}
-                                            <Ionicons name='settings-outline' color='#DB202C' size={30} style={tw``} onPress={toggleSettingsOverlay} />
-                                        </View>
-                                    </Animated.View>
-                                    <Animated.View entering={FadeIn.delay(10)} exiting={FadeOut.delay(10)} style={tw`flex-row justify-evenly items-center w-50 top-20`}>
-                                        {isLoading ?
-                                            <ActivityLoader />
-                                            : <>
-                                                <MaterialIcons name='replay-10' color='#DB202C' size={30} onPress={() => { videoRef.current.seek(currentTime - 10) }} />
-                                                <Ionicons name={paused ? 'play-outline' : 'pause-outline'} color='#DB202C' size={30} onPress={handlePlayPause} />
-                                                <MaterialIcons name='forward-10' color='#DB202C' size={30} onPress={() => { videoRef.current.seek(currentTime + 10) }} />
-                                            </>}
-                                    </Animated.View>
-                                    <Animated.View
-                                        entering={FadeInDown.delay(10)}
-                                        exiting={FadeOutDown.delay(10)}
-                                        style={tw`flex-row items-center justify-between w-full px-4 ${fullscreen ? '-bottom-45' : '-bottom-20'}`}>
+
+                    <View>
+                        <View style={tw` bg-opacity-25 absolute top-0 left-0 right-0 bottom-0 h-100 z-50`}>
+                            <View style={tw`justify-center items-center h-3/4`}>
+                                {controlsVisible && (<Animated.View
+                                    entering={FadeInUp.delay(10)}
+                                    exiting={FadeOutUp.delay(10)}
+                                    style={tw` flex-row justify-between px-4 items-center ${fullscreen ? 'w-180' : 'w-full'} -top-10`}>
+                                    <View>
+                                        <Text style={tw`text-white font-bold w-80 mr-auto`} numberOfLines={1}>{title}</Text>
+                                        {episodeNumber ? <Text style={tw`text-gray-500 text-xs mr-auto`} numberOfLines={1}>Episode Number: {episodeNumber}</Text> : null}
+                                    </View>
+                                    <View style={tw`flex-row items-center gap-4 ml-auto`}>
+                                        {downloadLinks ? <Ionicons name='download-outline' color='#DB202C' size={30} style={tw``} onPress={handleOpenLink} /> : null}
+                                        {subtitles && subtitles.length > 0 ? <MaterialIcons name='closed-caption-off' color='#DB202C' size={30} style={tw``} onPress={toggleCaptionsOverlay} /> : null}
+                                        <Ionicons name='settings-outline' color='#DB202C' size={30} style={tw``} onPress={toggleSettingsOverlay} />
+                                    </View>
+                                </Animated.View>)}
+                                <Animated.View entering={FadeIn.delay(10)} exiting={FadeOut.delay(10)} style={tw` flex-row justify-evenly items-center w-50 top-20`}>
+                                    {isLoading
+                                        ? <ActivityLoader />
+                                        : (controlsVisible && <>
+                                            <MaterialIcons name='replay-10' color='#DB202C' size={30} onPress={() => { videoRef.current.seek(currentTime - 10) }} />
+                                            <Ionicons name={paused ? 'play-outline' : 'pause-outline'} color='#DB202C' size={30} onPress={handlePlayPause} />
+                                            <MaterialIcons name='forward-10' color='#DB202C' size={30} onPress={() => { videoRef.current.seek(currentTime + 10) }} />
+                                        </>)
+                                    }
+                                </Animated.View>
+                                {controlsVisible && (<Animated.View
+                                    entering={FadeInDown.delay(10)}
+                                    exiting={FadeOutDown.delay(10)}
+                                    style={tw` w-full px-4 ${fullscreen ? '-bottom-45' : '-bottom-20'}`}>
+                                    <View style={tw`flex-row items-center justify-between`}>
                                         <TouchableOpacity
                                             style={tw`bg-red-500 w-20 justify-center items-center py-2 rounded-full`}
                                             onPress={() => { videoRef.current.seek(currentTime + 85) }}
@@ -420,39 +389,35 @@ const VideoPlayer = ({ route, type, provider, server }) => {
                                             <Text style={tw`text-white font-semibold`}>+85s</Text>
                                         </TouchableOpacity>
                                         <MaterialIcons name={fullscreen ? 'fullscreen-exit' : 'fullscreen'} color='#DB202C' size={30} onPress={handleToggleFullscreen} />
-                                    </Animated.View>
-                                </View>
+                                    </View>
+                                    <View style={tw`flex-row items-center justify-between`}>
+                                        <Text style={tw`text-white text-xs font-semibold`}>{currentTimeToDisplay ?? 0}</Text>
+                                        <Slider
+                                            style={tw`h-10 ${fullscreen ? 'w-180 -mx-2' : 'w-80'}`}
+                                            minimumValue={0}
+                                            maximumValue={100}
+                                            value={progress}
+                                            minimumTrackTintColor="#DB202C"
+                                            maximumTrackTintColor="#fff"
+                                            thumbTintColor="#DB202C"
+                                            tapToSeek={true}
+                                            onValueChange={(value) => {
+                                                setProgress(value);
+                                                const newCurrentTime = (value / 100) * seekableDuration;
+                                                setCurrentTimeToDisplay(formatDuration(moment.duration(newCurrentTime, 'seconds')));
+                                            }}
+                                            onSlidingComplete={(value) => {
+                                                if (videoRef.current) {
+                                                    videoRef.current.seek((value / 100) * seekableDuration);
+                                                }
+                                            }}
+                                        />
+                                        <Text style={tw`text-white text-xs font-semibold`}>{durationToDisplay}</Text>
+                                    </View>
+                                </Animated.View>)}
                             </View>
-                            <Animated.View
-                                entering={FadeInDown.delay(10)}
-                                exiting={FadeOutDown.delay(10)}
-                                style={tw`flex-row items-center justify-center ${fullscreen ? 'top-95' : 'top-70'}`}>
-                                <Text style={tw`text-white text-xs font-semibold`}>{currentTimeToDisplay}</Text>
-                                <Slider
-                                    style={tw`h-10 ${fullscreen ? 'w-180 -mx-2' : 'w-80'}`}
-                                    minimumValue={0}
-                                    maximumValue={100}
-                                    value={progress}
-                                    minimumTrackTintColor="#DB202C"
-                                    maximumTrackTintColor="#fff"
-                                    thumbTintColor="#DB202C"
-                                    tapToSeek={true}
-                                    onValueChange={(value) => {
-                                        setProgress(value);
-                                        const newCurrentTime = (value / 100) * seekableDuration;
-                                        setCurrentTimeToDisplay(formatDuration(moment.duration(newCurrentTime, 'seconds')));
-                                    }}
-                                onSlidingComplete={(value) => {
-                                    if (videoRef.current) {
-                                        videoRef.current.seek((value / 100) * seekableDuration);
-                                    }
-                                }}
-                                />
-                                <Text style={tw`text-white text-xs font-semibold`}>{durationToDisplay}</Text>
-
-                            </Animated.View>
                         </View>
-                    )}
+                    </View>
                 </View>
             </TouchableOpacity>
             <Text style={tw`text-center font-bold bg-red-500 ${fullscreen ? 'hidden' : ''}`}>Try Changing Quality or Server if video doesn't plays</Text>

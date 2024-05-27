@@ -39,11 +39,6 @@ const FlixHQ = () => {
                     component={StreamingLinks}
                     options={{ headerShown: false }}
                 />
-                <Stack.Screen
-                    name="Recommendations"
-                    component={Recommendations}
-                    options={{ headerShown: false }}
-                />
             </Stack.Navigator>
         </SafeAreaView>
     );

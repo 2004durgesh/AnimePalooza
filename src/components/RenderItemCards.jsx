@@ -24,7 +24,7 @@ const RenderItemCards = ({ item, index, handleItemPress,route }) => {
   const AnimatedImageBackground = Animated.createAnimatedComponent(ImageBackground);
   return (
     <>
-      <Animated.View entering={FadeInDown.delay(200 * index)}>
+      <Animated.View entering={FadeInDown.delay(50 * index)}>
         <TouchableOpacity onPress={() => { handleItemPress(item.url, item.id) }} style={tw`mx-auto`}>
           <View style={tw`flex-row items-center relative mx-2 my-2`}>
             {/* Background image */}

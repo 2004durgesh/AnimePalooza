@@ -98,16 +98,7 @@ const App = () => {
                   }]
                 })}
               />
-              {/* Screen for News */}
-              <Tab.Screen
-                name="News"
-                component={News}
-                options={{
-                  tabBarIcon: ({ color, size }) => (
-                    <Ionicons name="newspaper" size={30} color={color} />
-                  ),
-                }}
-              />
+              
               {/* Screen for Favorites */}
               <Tab.Screen
                 name="Favorites"

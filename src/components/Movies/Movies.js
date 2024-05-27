@@ -78,11 +78,6 @@ const Movies = () => {
           component={FlixHQStreamingLinks}
           options={({ route }) => ({ headerShown: false, tabBarStyle: { display: getRouteName(route) } })}
         />
-        <Stack.Screen
-          name="Recommendations"
-          component={Recommendations}
-          options={{ headerShown: false }}
-        />
       </Stack.Navigator>
     </SafeAreaProvider>
   );
