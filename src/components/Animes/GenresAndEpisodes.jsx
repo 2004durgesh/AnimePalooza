@@ -30,15 +30,17 @@ const GenresAndEpisodes = ({ genres, episodes, title }) => {
     return (
       <View>
         <Text style={tw`text-white text-xl p-2 pt-4 font-semibold`}>Genres</Text>
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-          <View style={tw`flex-row`}>
-            {genres.map((ele, index) => (
-              <Animated.View entering={FadeInLeft.delay(50 * index)} exiting={FadeOutRight.delay(50 * index)} key={index} style={tw`border p-2 h-10 rounded-md mx-1 bg-gray-700`}>
-                <Text style={tw`text-white`}>{ele}</Text>
-              </Animated.View>
-            ))}
-          </View>
-        </ScrollView>
+        <FlatList
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          data={genres}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item, index }) => (
+            <Animated.View entering={FadeInLeft.delay(50 * index)} exiting={FadeOutRight.delay(50 * index)} style={tw`border p-2 h-10 rounded-md mx-1 bg-gray-700`}>
+              <Text style={tw`text-white`}>{item}</Text>
+            </Animated.View>
+          )}
+        />
       </View>
     );
   };

@@ -14,7 +14,6 @@ import store from './components/redux/Store';
 import SplashScreen from 'react-native-splash-screen';
 
 // Import screen components
-import News from './components/News/News';
 import Anime from './components/Animes/Anime';
 import Movies from './components/Movies/Movies';
 import Manga from './components/Manga/Manga';

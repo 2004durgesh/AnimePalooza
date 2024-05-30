@@ -4,9 +4,7 @@ import axios from 'axios';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import tw from 'twrnc';
-import { Searchbar } from 'react-native-paper';
 import Config from "./constants/env.config";
-import PageNavigation from './PageNavigation';
 import RenderItemCards from './RenderItemCards';
 import ActivityLoader from './ActivityLoader';
 
@@ -19,35 +17,46 @@ const SearchBar = ({ type, provider }) => {
   const [isLoaded, setIsLoaded] = useState(true);
   const [error, setError] = useState('');
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [currentQuery, setCurrentQuery] = useState('');
 
   const url = `${Config.API_BASE_URL}/${type}/${provider}/${text}`;
 
   // Function to fetch search results from the API
-  async function fetchData(page) {
-    setIsLoadingMore(true);
-    try {
-      if (text === currentQuery) {
+  async function fetchData(page, isRefresh = false) {
+    if (text === currentQuery) {
+      if (isRefresh) {
+        setIsRefreshing(true);
+      } else {
+        setIsLoadingMore(true);
+      }
+      
+      try {
         const { data } = await axios.get(url, {
           params: { page: page },
           headers: { 'x-api-key': Config.API_KEY }
         });
-        setSearchResults(prevResults => [...prevResults, ...data.results]);
+
+        // If refreshing, replace the existing results, else append to them
+        if (isRefresh) {
+          setSearchResults(data.results);
+        } else {
+          setSearchResults(prevResults => [...prevResults, ...data.results]);
+        }
+
         setCurrentPage(page);
         setHasNextPage(data.hasNextPage);
-        console.log('fetchData function called')
+      } catch (err) {
+        setError(err.message);
+        setIsLoaded(false);
+        throw new Error(err.message);
+      } finally {
+        setIsLoaded(false);
+        setIsLoadingMore(false);
+        setIsRefreshing(false);
       }
     }
-    catch (err) {
-      setError(err.message);
-      setIsLoaded(false);
-      throw new Error(err.message);
-    } finally {
-      setIsLoaded(false);
-      setIsLoadingMore(false);
-    }
   }
-
 
   useEffect(() => {
     // Fetch data whenever the search text changes
@@ -73,7 +82,6 @@ const SearchBar = ({ type, provider }) => {
     if (currentPage > 1 && !isLoadingMore) {
       const prevPage = currentPage - 1;
       setCurrentPage(prevPage);
-      // Fetch the previous page data and reset the results array
       fetchData(prevPage);
     }
   };
@@ -84,10 +92,8 @@ const SearchBar = ({ type, provider }) => {
     Keyboard.dismiss();
     // Fetch data for the first page
     setCurrentPage(1);
-    console.log('handleSearch function called')
-    fetchData(1);
+    fetchData(1, true);
   };
-
 
   // Function to handle item press (can be further implemented)
   const handleItemPress = (url, id) => {
@@ -120,7 +126,6 @@ const SearchBar = ({ type, provider }) => {
           inputMode='search'
           onChangeText={(text) => {
             onChangeText(text);
-            // debouncedSearch();
           }}
           onSubmitEditing={handleSearch}
           value={text}
@@ -140,6 +145,8 @@ const SearchBar = ({ type, provider }) => {
             numColumns={3} // Use the numColumns prop to show 3 items in a row
             contentContainerStyle={tw`pb-96`}
             showsVerticalScrollIndicator={false}
+            refreshing={isRefreshing}
+            onRefresh={() => fetchData(1, true)}
             onEndReached={handleNextPage}
             onEndReachedThreshold={0.5}
             ListFooterComponent={() =>

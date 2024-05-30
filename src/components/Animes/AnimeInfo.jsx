@@ -11,7 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import GenresAndEpisodes from './GenresAndEpisodes';
 import ActivityLoader from '../ActivityLoader';
 import FavoritesButton from '../FavoritesButton';
-import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
+import Animated, { FadeInDown, FadeInUp, FadeOutUp } from 'react-native-reanimated';
 import Config from "../constants/env.config";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -30,6 +30,7 @@ const AnimeInfo = ({ route, navigation }) => {
   const [animeUrl, setAnimeUrl] = useState('');
   const [showDescription, setShowDescription] = useState(false); // State to control the animation
   const [isLoading, setIsLoading] = useState(true);
+  const [showZoomedImage, setShowZoomedImage] = useState(false);
 
   // API URL to fetch anime data
   const url = `${Config.API_BASE_URL}/anime/gogoanime/info/${id}`;
@@ -103,7 +104,9 @@ const AnimeInfo = ({ route, navigation }) => {
                     {/* Anime Details */}
                     <View style={tw`flex flex-row mx-2`}>
                       {/* Anime Image */}
-                      <Image source={{ uri: image }} style={tw`w-32 h-44 rounded-md`} />
+                      <TouchableOpacity onPress={() => setShowZoomedImage(true)}>
+                        <Image source={{ uri: image }} style={tw`w-32 h-44 rounded-md`} />
+                      </TouchableOpacity>
                       <View style={tw`px-4 flex-1`}>
                         {/* Anime Title */}
                         <Text style={tw`text-white text-xl`} selectable={true}>{title}</Text>
@@ -172,6 +175,15 @@ const AnimeInfo = ({ route, navigation }) => {
                 </View>
               </Animated.View>
             </ScrollView>
+            {showZoomedImage &&
+              <TouchableOpacity
+                style={tw`bg-black bg-opacity-75 items-center justify-center absolute flex-1 h-full w-full`}
+                onPress={() => setShowZoomedImage(false)}
+              >
+                <View>
+                  <Animated.Image entering={FadeInDown} exiting={FadeOutUp} source={{ uri: image }} style={tw`w-150 h-150 rounded-md`} resizeMode='contain' />
+                </View>
+              </TouchableOpacity>}
           </>
         }
       </SafeAreaView>

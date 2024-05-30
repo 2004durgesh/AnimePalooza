@@ -4,11 +4,10 @@ import axios from 'axios';
 import Config from "../constants/env.config";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import tw from 'twrnc';
-import PageNavigation from '../PageNavigation';
 import RenderItemCards from '../RenderItemCards';
 import ActivityLoader from '../ActivityLoader';
 
-const TopAiringAnime = ({ navigation }) => {
+const RecentAnimeEpisode = ({ navigation }) => {
   // State to hold the results from the API
   const [results, setResults] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -16,25 +15,37 @@ const TopAiringAnime = ({ navigation }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState('');
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const url = `${Config.API_BASE_URL}/anime/gogoanime/popular`;
 
   // Function to fetch data from the API
-  const fetchData = async (page) => {
-    setIsLoadingMore(true);
+  const fetchData = async (page, isRefresh = false) => {
+    console.log('Fetching data:', page)
+    if (isRefresh) {
+      setIsRefreshing(true);
+    } else {
+      setIsLoadingMore(true);
+    }
+
     try {
       const { data } = await axios.get(url, {
         params: { page, type: 1 },
         headers: { 'x-api-key': Config.API_KEY }
       });
-      setResults(prevResults => [...prevResults, ...data.results]);
+
+      if (isRefresh) {
+        setResults(data.results);
+      } else {
+        setResults(prevResults => [...prevResults, ...data.results]);
+      }
       setHasNextPage(data.hasNextPage);
       setIsLoaded(true);
-      console.log('Data:', data);
     } catch (err) {
       setError(err.message);
       console.error('Error fetching data:', err.message);
     } finally {
       setIsLoadingMore(false);
+      setIsRefreshing(false);
     }
   };
 
@@ -57,7 +68,6 @@ const TopAiringAnime = ({ navigation }) => {
     if (currentPage > 1 && !isLoadingMore) {
       const prevPage = currentPage - 1;
       setCurrentPage(prevPage);
-      // Fetch the previous page data and reset the results array
       fetchData(prevPage);
     }
   };
@@ -72,13 +82,6 @@ const TopAiringAnime = ({ navigation }) => {
 
   return (
     <SafeAreaView style={tw`bg-black flex-1`}>
-      {/* <PageNavigation
-        currentPage={currentPage}
-        handlePrevPage={handlePrevPage}
-        handleNextPage={handleNextPage}
-        isLoaded={isLoaded}
-        error={error}
-      /> */}
       {/* FlatList to render the items */}
       {isLoaded ? (
         <FlatList
@@ -94,10 +97,15 @@ const TopAiringAnime = ({ navigation }) => {
           numColumns={3} // Use the numColumns prop to show 3 items in a row
           contentContainerStyle={tw`pb-28`}
           showsVerticalScrollIndicator={false}
+          onRefresh={() => {
+            setCurrentPage(1);
+            fetchData(1, true);
+          }}
+          refreshing={isRefreshing}
           onEndReached={handleNextPage}
           onEndReachedThreshold={0.5}
           ListFooterComponent={() =>
-            isLoadingMore ? <ActivityLoader/> : null
+            isLoadingMore ? <ActivityLoader /> : null
           }
         />
       ) : (
@@ -107,4 +115,4 @@ const TopAiringAnime = ({ navigation }) => {
   );
 };
 
-export default TopAiringAnime;
+export default RecentAnimeEpisode;
