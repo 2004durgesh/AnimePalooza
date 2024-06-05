@@ -10,16 +10,15 @@ cd android
 
 # The following commands use Gradle, a build tool for Android, to build the APK.
 
-
 # assembleRelease: Builds the release APK.
 echo "Building release APK........................................................................."
 ./gradlew assembleRelease 
 
+echo "Installing release APK........................................................................."
+./gradlew installRelease
+
 # assembleRelease: Bundles the release AAB.
 echo "Bundling release AAB........................................................................."
 ./gradlew bundleRelease 
-
-echo "Installing release APK........................................................................."
-./gradlew installRelease
 
 echo "All tasks completed successfully........................................................................."

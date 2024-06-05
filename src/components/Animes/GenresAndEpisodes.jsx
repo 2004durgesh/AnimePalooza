@@ -4,8 +4,9 @@ import tw from 'twrnc';
 import { useNavigation } from '@react-navigation/native';
 import Animated, { FadeInLeft, FadeOutRight } from 'react-native-reanimated';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { FlashList } from "@shopify/flash-list";
 
-const GenresAndEpisodes = ({ genres, episodes, title }) => {
+const GenresAndEpisodes = ({ genres, episodes, title,image }) => {
   const navigation = useNavigation();
   const [parsedWatchedData, setParsedWatchedData] = useState([]);
   useEffect(() => {
@@ -48,15 +49,17 @@ const GenresAndEpisodes = ({ genres, episodes, title }) => {
   // Render episodes list in vertical scroll view
   const renderEpisodes = () => {
     return (
-      <FlatList
+      <FlashList
         data={episodes}
         keyExtractor={(item) => item.id.toString()}
+        estimatedItemSize={1500}
         renderItem={({ item, index }) => (
           <Animated.View entering={FadeInLeft.delay(50 * index)} exiting={FadeOutRight.delay(50 * index)} style={tw`border-b border-gray-800 p-2 py-3 my-1 h-16`}>
             <TouchableOpacity onPress={() => navigation.navigate('AnimeEpisodeStreamingLinks', {
               episodeId: item.id,
               episodeNumber: item.number,
-              title
+              title,
+              image
             })}>
               <Text style={tw`text-white text-lg`}>Episode {item.number}</Text>
             </TouchableOpacity>

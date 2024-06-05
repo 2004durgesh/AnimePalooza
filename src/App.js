@@ -44,7 +44,7 @@ const App = () => {
   return (
     <Provider store={store}>
       <PaperProvider>
-        <SafeAreaView style={tw`bg-black flex-1`}>
+        {/* //<SafeAreaView style={tw`bg-black flex-1`}> */}
           <NavigationContainer>
             <Tab.Navigator
               screenOptions={bottomTabScreenOptions}
@@ -110,7 +110,7 @@ const App = () => {
               />
             </Tab.Navigator>
           </NavigationContainer>
-        </SafeAreaView>
+        {/* //</SafeAreaView> */}
       </PaperProvider>
     </Provider>
   );

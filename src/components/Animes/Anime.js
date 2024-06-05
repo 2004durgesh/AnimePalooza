@@ -17,7 +17,7 @@ const Stack = createNativeStackNavigator();
 
 const Anime = ({route}) => {
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
+    // <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
       <Stack.Navigator>
         <Stack.Screen
           name="TopTabs"
@@ -35,7 +35,7 @@ const Anime = ({route}) => {
           options={{ headerShown:false}}
         />
       </Stack.Navigator>
-    </SafeAreaView>
+    // </SafeAreaView> 
   );
 };
 

@@ -81,7 +81,7 @@ const RecentAnimeEpisode = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={tw`bg-black flex-1`}>
+    <View style={tw`bg-black flex-1`}>
       {/* FlatList to render the items */}
       {isLoaded ? (
         <FlatList
@@ -111,7 +111,7 @@ const RecentAnimeEpisode = ({ navigation }) => {
       ) : (
         <ActivityLoader />
       )}
-    </SafeAreaView>
+    </View>
   );
 };
 

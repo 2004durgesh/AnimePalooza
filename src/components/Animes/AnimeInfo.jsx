@@ -31,6 +31,7 @@ const AnimeInfo = ({ route, navigation }) => {
   const [showDescription, setShowDescription] = useState(false); // State to control the animation
   const [isLoading, setIsLoading] = useState(true);
   const [showZoomedImage, setShowZoomedImage] = useState(false);
+  const [descriptionHeight, setDescriptionHeight] = useState(0);
 
   // API URL to fetch anime data
   const url = `${Config.API_BASE_URL}/anime/gogoanime/info/${id}`;
@@ -84,7 +85,7 @@ const AnimeInfo = ({ route, navigation }) => {
 
   return (
     <>
-      <SafeAreaView style={tw`flex-1 bg-black`}>
+      <View style={tw`flex-1 bg-black`}>
         {isLoading ?
           <ActivityLoader />
           :
@@ -129,19 +130,19 @@ const AnimeInfo = ({ route, navigation }) => {
                 {/* Anime Description and Other Names */}
                 <View style={tw`relative`}>
                   <View style={tw`mt-4`}>
-                    {/* Anime Description */}
-                    <Text style={[tw`text-[#D3D3D3] px-2 leading-5 text-justify mb-5`]}>Description: {desc}</Text>
-                    {/* Other Names */}
-                    <Text style={[tw`text-[#D3D3D3] px-2 leading-5 text-justify`]}>Other name(s): {name}</Text>
+                    <View onLayout={(event) => setDescriptionHeight(event.nativeEvent.layout.height)}>
+                      <Text style={[tw`text-[#D3D3D3] px-2 leading-5 text-justify`]}>Description: {desc}</Text>
+                      <Text style={[tw`text-[#D3D3D3] px-2 leading-5 text-justify`]}>Other name(s): {name}</Text>
+                    </View>
                   </View>
                   <View style={tw`h-full`}>
                     {/* Animated description view */}
                     <MotiView
                       from={{
-                        translateY: -220,
+                        translateY: -descriptionHeight,
                       }}
                       animate={{
-                        translateY: showDescription ? 0 : -220,
+                        translateY: showDescription ? 0 : -descriptionHeight,
                       }}
                       transition={{
                         type: 'timing',
@@ -149,7 +150,11 @@ const AnimeInfo = ({ route, navigation }) => {
                       }}
                       style={{ overflow: 'hidden', borderBottomLeftRadius: 16, borderBottomRightRadius: 16 }}
                     >
-                      <LinearGradient colors={['rgba(0, 0, 0, 0.9)', 'rgba(0, 0, 0, 1)']} style={{ height: '100%', width: '100%' }}>
+                      <LinearGradient 
+                      locations={[0,0.05,0.1]}
+                      colors={['rgba(0, 0, 0, 0.5)','rgba(0, 0, 0, 0.7)' ,'rgba(0, 0, 0, 1)']} 
+                      start={{x: 0.0, y: 0.0}} end={{x: 0.0, y: 0.1}}
+                      style={{ height: '100%', width: '100%' }}>
                         <TouchableOpacity onPress={handleIconClick}>
                           {/* Animated icon rotation */}
                           <MotiView
@@ -168,7 +173,7 @@ const AnimeInfo = ({ route, navigation }) => {
                           </MotiView>
                         </TouchableOpacity>
                         {/* Render Genres and Episodes which is a flatlist */}
-                        <GenresAndEpisodes genres={genres} episodes={episodes} title={title} />
+                        <GenresAndEpisodes genres={genres} episodes={episodes} title={title} image={image} />
                       </LinearGradient>
                     </MotiView>
                   </View>
@@ -186,7 +191,7 @@ const AnimeInfo = ({ route, navigation }) => {
               </TouchableOpacity>}
           </>
         }
-      </SafeAreaView>
+      </View>
     </>
   );
 };

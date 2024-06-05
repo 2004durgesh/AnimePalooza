@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, TouchableOpacity, ActivityIndicator, ToastAndroid, StatusBar, Linking, ScrollView, TouchableWithoutFeedback } from 'react-native';
-import { TextTrackType } from 'react-native-video';
-import Video from 'react-native-video';
-import Subtitles from 'react-native-subtitles'
+import Video,{ TextTrackType } from 'react-native-video';
 import Orientation from 'react-native-orientation-locker';
 import Config from "./constants/env.config";
 import axios from 'axios';
@@ -38,9 +36,9 @@ const VideoPlayer = ({ route, type, provider, server }) => {
     const [streamingQuality, setStreamingQuality] = useState('');
     const [selectedServer, setSelectedServer] = useState("");
     const [isLoading, setIsLoading] = useState(true)
-    const { episodeId, mediaId, episodeNumber, title } = route
+    const { episodeId, mediaId, episodeNumber, title,image } = route
     
-
+console.log(paused,"paused");
     
     // Fetch streaming links on component mount
     useEffect(() => {
@@ -108,9 +106,7 @@ const VideoPlayer = ({ route, type, provider, server }) => {
         setDurationToDisplay(formatDuration(moment.duration(seekableDuration, 'seconds')));
         setCurrentTime(currentTime);
         setSeekableDuration(seekableDuration);
-        // addToWatchTimeHandler()
         setProgress(parseInt((currentTime / seekableDuration) * 100));
-        // console.log('call hua')
     };
 
     // Helper function to format duration
@@ -307,11 +303,11 @@ const VideoPlayer = ({ route, type, provider, server }) => {
                         source={{
                             uri: streamingSource,
                             metadata: {
-                                title: 'Custom Title',
-                                subtitle: 'Custom Subtitle',
-                                artist: 'Custom Artist',
-                                description: 'Custom Description',
-                                imageUri: 'https://pbs.twimg.com/profile_images/1498641868397191170/6qW2XkuI_400x400.png'
+                                title: title,
+                                subtitle: `Episode Number: ${episodeNumber}`,
+                                artist: `Episode Number: ${episodeNumber}`,
+                                description: '',
+                                imageUri: image,
                             }
                         }}
                         style={tw`absolute top-0 left-0 right-0 bottom-0 z-10`}
@@ -322,13 +318,14 @@ const VideoPlayer = ({ route, type, provider, server }) => {
                         onError={showToastWithGravity}
                         onFullscreenPlayerDidPresent={handlePresentFullscreen}
                         onFullscreenPlayerDidDismiss={handleDismissFullscreen}
+                        onPlaybackStateChanged={(state) => setPaused(!state.isPlaying)}
                         onProgress={handleOnProgress}
                         progressUpdateInterval={1000}
                         resizeMode="contain"
                         onBuffer={handleOnBuffer}
-                        showNotificationContorols={true}
-                        playInBackground={true}
-                        playWhenInactive={true}
+                        showNotificationControls={true}
+                        // playInBackground={true}
+                        // playWhenInactive={true}
                         selectedTextTrack={{ type: 'language', value: 'en' }}
                         // textTracks={[
                         //     {
@@ -341,14 +338,7 @@ const VideoPlayer = ({ route, type, provider, server }) => {
                         // ]}
                         subtitleStyle={{ paddingBottom: 50, fontSize: 20, opacity: 1 }}
                     />
-                    <Subtitles
-                        currentTime={currentTime}
-                        selectedsubtitle={{
-                            file: subtitlesUrl,
-                        }}
-                        containerStyle={tw`absolute ${fullscreen ? 'bottom-20' : 'bottom-30'} z-20 w-full`}
-                        textStyle={{ fontSize: 15, padding: 5, backgroundColor: null }}
-                    />
+                   
 
                     <View>
                         <View style={tw` bg-opacity-25 absolute top-0 left-0 right-0 bottom-0 h-100 z-50`}>
