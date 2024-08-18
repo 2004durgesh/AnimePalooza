@@ -43,7 +43,7 @@ const FavoriteList = ({ navigation, favoriteType }) => {
     let screenName = '';
     if (favoriteType === 'movies') {
       const movieProviderNavigator = id.split('/')[0];
-      screenName = movieProviderNavigator === 'movie' ? 'FlixHQInfo' : 'DramacoolInfo';
+      screenName = movieProviderNavigator === 'drama-detail' ? 'DramacoolInfo' : 'FlixHQInfo';
     } else {
       switch (favoriteType) {
         case 'anime':

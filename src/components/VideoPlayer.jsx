@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, TouchableOpacity, ActivityIndicator, ToastAndroid, StatusBar, Linking, ScrollView, TouchableWithoutFeedback } from 'react-native';
-import Video,{ TextTrackType } from 'react-native-video';
+import Video, { TextTrackType } from 'react-native-video';
 import Orientation from 'react-native-orientation-locker';
 import Config from "./constants/env.config";
 import axios from 'axios';
@@ -9,7 +9,7 @@ import Slider from '@react-native-community/slider';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import tw from 'twrnc';
-import { Overlay, ListItem, CheckBox } from '@rneui/themed';
+import { Overlay, CheckBox } from '@rneui/themed';
 import Animated, { FadeIn, FadeInDown, FadeInUp, FadeOut, FadeOutDown, FadeOutUp, } from 'react-native-reanimated';
 import ActivityLoader from './ActivityLoader';
 
@@ -25,21 +25,21 @@ const VideoPlayer = ({ route, type, provider, server }) => {
     const [fullscreen, setFullscreen] = useState(false);
     const [settingsVisible, setSettingsVisible] = useState(false);
     const [captionsVisible, setCaptionsVisible] = useState(false);
+    const [disableCaptions, setDisableCaptions] = useState(false);
     const [expanded, setExpanded] = useState(true);
     const [downloadLinks, setDownloadLinks] = useState('');
     const [qualitySelectedIndex, setQualitySeletedIndex] = useState(0);
     const [captionsSelectedIndex, setCaptionsSeletedIndex] = useState(0);
     const [streamingSource, setStreamingSource] = useState('');
     const [subtitles, setSubtitles] = useState([]);
-    const [subtitlesUrl, setSubtitlesUrl] = useState('');
+    const [selectedSubtitle, setSelectedSubtitle] = useState({});
     const [streamingLinks, setStreamingLinks] = useState([]);
     const [streamingQuality, setStreamingQuality] = useState('');
     const [selectedServer, setSelectedServer] = useState("");
     const [isLoading, setIsLoading] = useState(true)
-    const { episodeId, mediaId, episodeNumber, title,image } = route
-    
-console.log(paused,"paused");
-    
+    const { episodeId, mediaId, episodeNumber, title, image } = route
+
+
     // Fetch streaming links on component mount
     useEffect(() => {
         // API URL to fetch streaming links for the episode
@@ -58,12 +58,13 @@ console.log(paused,"paused");
                 console.log(data)
                 setStreamingLinks(data.sources);
                 setDownloadLinks(data.download);
-                setSubtitles(data.subtitles);
-                const initialQuality = data.sources[3].quality; // Access quality from data
+                setSubtitles([{lang:"",url:""},...data.subtitles]);
+                setSelectedSubtitle(subtitles[0]);
+                const initialQuality = data.sources[data?.sources?.length-1].quality; // Access quality from data
                 setStreamingQuality(initialQuality); // Set the initial quality
                 setQualitySeletedIndex(3); // Set the initial index
-                if (provider === "gogoanime") { setStreamingSource(data.sources[3].url); }
-                if (provider === "dramacool") { setStreamingSource(data.sources[1].url); }
+                if (provider === "gogoanime") { setStreamingSource(data.sources[data.sources.length-1].url); }
+                if (provider === "dramacool") { setStreamingSource(data.sources[data.sources.length-1].url); }
                 if (provider === "flixhq") { setStreamingSource(data.sources[0].url); }
                 return data;
             } catch (err) {
@@ -73,7 +74,6 @@ console.log(paused,"paused");
             }
         };
         fetchData();
-        console.log("sub", subtitles, subtitlesUrl)
     }, [episodeId, selectedServer]);
 
     const toggleSettingsOverlay = () => {
@@ -207,7 +207,7 @@ console.log(paused,"paused");
                 onBackdropPress={toggleSettingsOverlay}
                 style={tw`justify-center items-center`}
             >
-                <ScrollView style={tw`p-2 w-84 max-h-96`}>
+                <ScrollView style={tw`p-2 w-84 max-h-50`}>
                     <View>
                         {streamingLinks.map((source, index) => (
                             <View key={index}>
@@ -236,27 +236,6 @@ console.log(paused,"paused");
                             </View>
                         ))}
                     </View>
-                    <ListItem.Accordion
-                        content={
-                            <ListItem.Content>
-                                <ListItem.Title style={tw`text-[#DB202C]`}>Select a server</ListItem.Title>
-                            </ListItem.Content>
-                        }
-                        isExpanded={expanded}
-                        onPress={() => {
-                            setExpanded(!expanded);
-                        }}
-                    >
-                        <View style={tw`flex flex-row flex-wrap gap-1`}>
-                            {server.map((server) => (
-                                <View key={server}>
-                                    <TouchableOpacity style={[tw`p-2 rounded-full`, { borderWidth: 1, borderColor: 'red', }]} onPress={() => setSelectedServer(server)}>
-                                        <ListItem.Title style={tw`text-red-500 capitalize`}>{server}</ListItem.Title>
-                                    </TouchableOpacity>
-                                </View>
-                            ))}
-                        </View>
-                    </ListItem.Accordion>
                 </ScrollView>
             </Overlay>
             <Overlay
@@ -270,11 +249,12 @@ console.log(paused,"paused");
                             <View key={index}>
                                 <TouchableOpacity
                                     onPress={() => {
-                                        setSubtitlesUrl(source.url)
+                                        setCaptionsSeletedIndex(index);
+                                        setSelectedSubtitle(source)
                                     }}
                                     style={tw`p-2 flex-row justify-between items-center`}
                                 >
-                                    <Text style={tw`text-[#DB202C]`}>Language: {source.lang}</Text>
+                                    <Text style={tw`text-[#DB202C]`}>{source?.lang||"Off"}</Text>
                                     <CheckBox
                                         checked={captionsSelectedIndex === index}
                                         checkedIcon="dot-circle-o"
@@ -284,7 +264,7 @@ console.log(paused,"paused");
                                         checkedColor="#DB202C"
                                         onPress={() => {
                                             setCaptionsSeletedIndex(index);
-                                            setSubtitlesUrl(source.url)
+                                            setSelectedSubtitle(source)
                                         }} />
                                 </TouchableOpacity>
                             </View>
@@ -300,16 +280,7 @@ console.log(paused,"paused");
             >
                 <View style={tw`relative ${fullscreen ? 'h-full' : 'h-105'} w-full`}>
                     <Video
-                        source={{
-                            uri: streamingSource,
-                            metadata: {
-                                title: title,
-                                subtitle: `Episode Number: ${episodeNumber}`,
-                                artist: `Episode Number: ${episodeNumber}`,
-                                description: '',
-                                imageUri: image,
-                            }
-                        }}
+                        source={{ uri: streamingSource }}
                         style={tw`absolute top-0 left-0 right-0 bottom-0 z-10`}
                         paused={paused}
                         ref={videoRef}
@@ -318,27 +289,24 @@ console.log(paused,"paused");
                         onError={showToastWithGravity}
                         onFullscreenPlayerDidPresent={handlePresentFullscreen}
                         onFullscreenPlayerDidDismiss={handleDismissFullscreen}
-                        onPlaybackStateChanged={(state) => setPaused(!state.isPlaying)}
                         onProgress={handleOnProgress}
                         progressUpdateInterval={1000}
                         resizeMode="contain"
                         onBuffer={handleOnBuffer}
-                        showNotificationControls={true}
-                        // playInBackground={true}
-                        // playWhenInactive={true}
-                        selectedTextTrack={{ type: 'language', value: 'en' }}
-                        // textTracks={[
-                        //     {
-                        //         title: 'test',
-                        //         language: 'en',
-                        //         type: TextTrackType.VTT,
-                        //         uri:
-                        //             'https://brenopolanski.github.io/html5-video-webvtt-example/MIB2-subtitles-pt-BR.vtt',
-                        //     },
-                        // ]}
-                        subtitleStyle={{ paddingBottom: 50, fontSize: 20, opacity: 1 }}
+                        onTextTracks={(textTracks) => { console.log(textTracks, "......", selectedSubtitle) }}
+                        textTracks={subtitles.map((sub) => {
+                            return {
+                                title: sub.lang,
+                                language: sub.lang,
+                                type: TextTrackType.VTT,
+                                uri: sub.url,
+
+                            }
+                        })}
+                        selectedTextTrack={{ type: 'index', value: captionsSelectedIndex + 1 }}
+                        subtitleStyle={{ paddingBottom: 50, fontSize: fullscreen ? 20 : 16, opacity: 1 }}
                     />
-                   
+
 
                     <View>
                         <View style={tw` bg-opacity-25 absolute top-0 left-0 right-0 bottom-0 h-100 z-50`}>
