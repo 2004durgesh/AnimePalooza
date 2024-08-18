@@ -8,12 +8,16 @@ npx react-native bundle --platform android --dev false --entry-file index.js --b
 echo "Changing directory to android........................................................................."
 cd android
 
+# Clean the project
+# ./gradlew clean
+
 # The following commands use Gradle, a build tool for Android, to build the APK.
-./gradlew clean
+
 # assembleRelease: Builds the release APK.
 echo "Building release APK........................................................................."
 ./gradlew assembleRelease 
 
+# installRelease: Installs the release APK on the connected device.
 echo "Installing release APK........................................................................."
 ./gradlew installRelease
 
