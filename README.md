@@ -1,7 +1,8 @@
 # AnimePalooza
 
 A multi-category entertainment Android app for streaming anime, manga, dramas, news, and more!
-
+> [!WARNING] The development of this app has stopped, and no further future releases.  
+> Use [this repository](https://github.com/2004durgesh/uwumi).
 ## Features
 
 - **Anime Section**
